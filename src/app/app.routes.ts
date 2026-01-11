@@ -1,6 +1,11 @@
 import { Routes } from '@angular/router';
-import {ProductComponent} from './product-component/product-component';
+import {AdminProduct} from './features/admin/admin-product/admin-product';
 
 export const routes: Routes = [
-  {path : 'products' , component : ProductComponent},
+  {
+    path: 'admin',
+    loadChildren: () => import('./features/admin/admin.routes')
+      .then(m => m.ADMIN_ROUTES)
+  },
+
 ];
