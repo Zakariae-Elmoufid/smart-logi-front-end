@@ -1,0 +1,111 @@
+<div class="space-y-6">
+    <!-- Welcome Section -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <h1 class="text-2xl font-bold text-gray-900">Bienvenue, Manager</h1>
+        <p class="text-gray-500 mt-1">Voici un aperçu de l'activité de vos entrepôts aujourd'hui.</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Total Warehouses -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-gray-400">Total</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-900">4</h3>
+            <p class="text-sm text-green-600 mt-2 font-medium flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+                +1 ce mois
+            </p>
+        </div>
+
+        <!-- Inventory Status -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-gray-400">Stock</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-900">12,450</h3>
+            <p class="text-sm text-gray-500 mt-2">Unités en stock</p>
+        </div>
+
+        <!-- Pending Orders -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-gray-400">Commandes</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-900">28</h3>
+            <p class="text-sm text-orange-600 mt-2 font-medium">En attente</p>
+        </div>
+
+        <!-- Alerts -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-red-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-gray-400">Alertes</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-900">3</h3>
+            <p class="text-sm text-red-600 mt-2 font-medium">Stock critique</p>
+        </div>
+    </div>
+
+    <!-- Recent Activity Placeholder -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">Activité Récente</h3>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Réception de marchandise</p>
+                        <p class="text-xs text-gray-500">Entrepôt A - Lot #4589</p>
+                    </div>
+                </div>
+                <span class="text-xs text-gray-400">Il y a 2h</span>
+            </div>
+            <div class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Nouvel entrepôt créé</p>
+                        <p class="text-xs text-gray-500">Entrepôt Nord</p>
+                    </div>
+                </div>
+                <span class="text-xs text-gray-400">Il y a 5h</span>
+            </div>
+        </div>
+    </div>
+</div>

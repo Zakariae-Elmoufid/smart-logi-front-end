@@ -1,0 +1,119 @@
+<div class="min-h-[500px]">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900">Entrepôts</h2>
+            <p class="text-gray-500 mt-1">Gérez vos emplacements de stockage et centres de distribution</p>
+        </div>
+        <button (click)="openAddModal()"
+            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold flex items-center gap-2 transition-colors shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Ajouter un entrepôt
+        </button>
+    </div>
+
+    <!-- Feedback Messages -->
+    @if (successMessage) {
+    <div
+        class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg flex items-center gap-2 animate-fade-in">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        {{ successMessage }}
+    </div>
+    }
+
+    @if (errorMessage) {
+    <div
+        class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center gap-2 animate-fade-in">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {{ errorMessage }}
+    </div>
+    }
+
+    <!-- Loading -->
+    @if (isLoading) {
+    <div class="flex flex-col items-center justify-center py-20">
+        <div class="w-10 h-10 border-4 border-gray-200 border-l-purple-600 rounded-full animate-spin mb-3"></div>
+        <p class="text-gray-500">Chargement des données...</p>
+    </div>
+    }
+
+    <!-- Empty State -->
+    @if (!isLoading && warehouses.length === 0) {
+    <div class="text-center py-20 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900">Aucun entrepôt</h3>
+        <p class="text-gray-500 mb-6">Commencez par ajouter votre premier entrepôt</p>
+        <button (click)="openAddModal()" class="text-purple-600 font-medium hover:text-purple-700 hover:underline">
+            Créer un entrepôt maintenant &rarr;
+        </button>
+    </div>
+    }
+
+    <!-- Grid -->
+    @if (!isLoading && warehouses.length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        @for (wh of warehouses; track wh.id) {
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow group">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 group-hover:bg-purple-50 group-hover:text-purple-600 transition-colors">
+                        <span class="font-bold text-lg">{{ wh.name.charAt(0).toUpperCase() }}</span>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900 line-clamp-1" title="{{ wh.name }}">{{ wh.name }}</h3>
+                        <div class="flex items-center gap-2 text-xs text-gray-500">
+                            <span class="font-mono bg-gray-100 px-1.5 py-0.5 rounded">{{ wh.code }}</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="px-2 py-1 text-xs font-semibold rounded-full border"
+                    [class]="wh.active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'">
+                    {{ wh.active ? 'Actif' : 'Inactif' }}
+                </span>
+            </div>
+
+            <div class="mb-4 pl-[52px]">
+                <p class="text-sm text-gray-600 flex items-start gap-1.5">
+                    <svg class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="line-clamp-2">{{ wh.address }}</span>
+                </p>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-4 border-t border-gray-100 mt-auto">
+                <button (click)="openEditModal(wh)"
+                    class="text-sm font-medium text-gray-600 hover:text-purple-600 px-3 py-1.5 rounded-lg hover:bg-purple-50 transition-colors">
+                    Modifier
+                </button>
+                <button (click)="deleteWarehouse(wh)"
+                    class="text-sm font-medium text-red-600 hover:text-red-700 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors">
+                    Supprimer
+                </button>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>
+
+<!-- Modal -->
+<app-warehouse-modal [isOpen]="isModalOpen" [isSubmitting]="isSubmitting" [editWarehouse]="editingWarehouse"
+    [backendErrors]="backendErrors" (close)="closeModal()" (submit)="onSave($event)"></app-warehouse-modal>
