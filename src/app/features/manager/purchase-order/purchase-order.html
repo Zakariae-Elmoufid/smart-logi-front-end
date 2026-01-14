@@ -1,0 +1,127 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Bons de Commande</h1>
+      <p class="text-gray-500 mt-1">Gérez vos commandes fournisseurs</p>
+    </div>
+    <button (click)="openCreateModal()"
+      class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold flex items-center gap-2 transition-colors shadow-sm">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      Nouvelle Commande
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && purchaseOrders.length === 0"
+    class="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
+    <div class="w-16 h-16 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    </div>
+    <h3 class="text-lg font-semibold text-gray-900">Aucun bon de commande</h3>
+    <p class="text-gray-500 mb-6">Créez votre première commande fournisseur.</p>
+    <button (click)="openCreateModal()" class="text-purple-600 font-medium hover:text-purple-700 hover:underline">
+      Créer une commande &rarr;
+    </button>
+  </div>
+
+  <!-- Orders Table -->
+  <div *ngIf="!isLoading && purchaseOrders.length > 0"
+    class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Fournisseur</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Entrepôt</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date
+              Prévue</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Statut</th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let order of purchaseOrders" class="hover:bg-gray-50 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">
+              #{{ order.id }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">{{ order.supplierName
+                }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ order.warehouseName }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ order.expectedDate | date:'dd/MM/yyyy' }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 text-xs font-semibold rounded-full border"
+                [class.bg-yellow-50]="order.orderStatus === 'CREATED' "
+                [class.text-yellow-700]="order.orderStatus === 'CREATED'"
+                [class.border-yellow-200]="order.orderStatus === 'CREATED'"
+                [class.bg-blue-50]="order.orderStatus === 'APPROVED'"
+                [class.text-blue-700]="order.orderStatus === 'APPROVED'"
+                [class.border-blue-200]="order.orderStatus === 'APPROVED'"
+                [class.bg-green-50]="order.orderStatus === 'RECEIVED'"
+                [class.text-green-700]="order.orderStatus === 'RECEIVED'"
+                [class.border-green-200]="order.orderStatus === 'RECEIVED'"
+                [class.bg-orange-50]="order.orderStatus === 'PARTIALLY_RECEIVED'"
+                [class.text-orange-700]="order.orderStatus === 'PARTIALLY_RECEIVED'"
+                [class.border-orange-200]="order.orderStatus === 'PARTIALLY_RECEIVED'"
+                [class.bg-red-50]="order.orderStatus === 'CANCELED'"
+                [class.text-red-700]="order.orderStatus === 'CANCELED'"
+                [class.border-red-200]="order.orderStatus === 'CANCELED'">
+                {{ order.orderStatus }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <div class="flex justify-end gap-2">
+                <button (click)="openDetails(order)"
+                  class="text-gray-600 hover:text-purple-600 bg-gray-50 hover:bg-purple-50 px-3 py-1 rounded-md transition-colors flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  Consulter
+                </button>
+                <button *ngIf="order.orderStatus === 'CREATED' "
+                  (click)="approveOrder(order)"
+                  class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md transition-colors">
+                  Valider
+                </button>
+                <button *ngIf="order.orderStatus === 'APPROVED' || order.orderStatus === 'PARTIALLY_RECEIVED'"
+                  (click)="receiveOrder(order)"
+                  class="text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100 px-3 py-1 rounded-md transition-colors">
+                  Réceptionner
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Create Modal -->
+  <app-purchase-order-modal [isOpen]="isCreateModalOpen" [isSubmitting]="isSubmitting" [backendErrors]="backendErrors"
+    (close)="closeCreateModal()" (submit)="onCreateOrder($event)">
+  </app-purchase-order-modal>
+
+  <!-- Details Modal -->
+  <app-purchase-order-details-modal [isOpen]="isDetailsModalOpen" [order]="selectedOrder" (close)="closeDetails()">
+  </app-purchase-order-details-modal>
+</div>

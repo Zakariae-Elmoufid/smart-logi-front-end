@@ -1,0 +1,104 @@
+<div *ngIf="isOpen" class="fixed inset-0 z-50 overflow-y-auto">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity" (click)="onClose()"></div>
+
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div class="relative w-full max-w-2xl transform rounded-2xl bg-white p-6 text-left shadow-xl transition-all">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900">Commande #{{ order?.id }}</h3>
+                    <span class="text-sm text-gray-500">Créée le {{ order?.orderDate | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+                <button (click)="onClose()" class="text-gray-400 hover:text-gray-500 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div *ngIf="order" class="space-y-6">
+                <!-- Info Grid -->
+                <div class="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase">Fournisseur</p>
+                        <p class="text-sm font-semibold text-gray-900 mt-1">{{ order.supplierName || 'N/A' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase">Entrepôt</p>
+                        <p class="text-sm font-semibold text-gray-900 mt-1">{{ order.warehouseName || 'N/A' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase">Statut</p>
+                        <span class="inline-flex mt-1 px-2 py-0.5 text-xs font-semibold rounded-full border"
+                            [class.bg-yellow-50]="order.orderStatus === 'CREATED'"
+                            [class.text-yellow-700]="order.orderStatus === 'CREATED'"
+                            [class.border-yellow-200]="order.orderStatus === 'CREATED'"
+                            [class.bg-blue-50]="order.orderStatus === 'APPROVED'"
+                            [class.text-blue-700]="order.orderStatus === 'APPROVED'"
+                            [class.border-blue-200]="order.orderStatus === 'APPROVED'"
+                            [class.bg-green-50]="order.orderStatus === 'RECEIVED'"
+                            [class.text-green-700]="order.orderStatus === 'RECEIVED'"
+                            [class.border-green-200]="order.orderStatus === 'RECEIVED'"
+                            [class.bg-orange-50]="order.orderStatus === 'PARTIALLY_RECEIVED'"
+                            [class.text-orange-700]="order.orderStatus === 'PARTIALLY_RECEIVED'"
+                            [class.border-orange-200]="order.orderStatus === 'PARTIALLY_RECEIVED'"
+                            [class.bg-red-50]="order.orderStatus === 'CANCELED'"
+                            [class.text-red-700]="order.orderStatus === 'CANCELED'"
+                            [class.border-red-200]="order.orderStatus === 'CANCELED'">
+                            {{ order.orderStatus }}
+                        </span>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase">Date Prévue</p>
+                        <p class="text-sm font-semibold text-gray-900 mt-1">{{ order.expectedDate | date:'dd/MM/yyyy' }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Lines Table -->
+                <div>
+                    <h4 class="text-sm font-bold text-gray-900 mb-3">Produits commandés</h4>
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produit
+                                    </th>
+                                    <th scope="col"
+                                        class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                                        Quantité</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white">
+                                <tr *ngFor="let line of order.liens" class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 text-sm text-gray-900 font-medium">
+                                        {{ line.productName || 'Produit #' + line.productId }}
+                                    </td>
+                                    <td class="px-4 py-3 text-sm text-gray-900 text-right font-mono">
+                                        {{ line.quantity }}
+                                    </td>
+                                </tr>
+                                <tr *ngIf="!order.liens || order.liens.length === 0">
+                                    <td colspan="2" class="px-4 py-4 text-center text-sm text-gray-500 italic">
+                                        Aucun produit listé
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+                <button (click)="onClose()"
+                    class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

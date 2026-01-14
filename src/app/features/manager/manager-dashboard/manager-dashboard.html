@@ -18,13 +18,13 @@
                 </div>
                 <span class="text-sm font-medium text-gray-400">Total</span>
             </div>
-            <h3 class="text-3xl font-bold text-gray-900">4</h3>
+            <h3 class="text-3xl font-bold text-gray-900">{{ isLoading ? '...' : stats.totalWarehouses }}</h3>
             <p class="text-sm text-green-600 mt-2 font-medium flex items-center">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
-                +1 ce mois
+                Actifs
             </p>
         </div>
 
@@ -39,7 +39,7 @@
                 </div>
                 <span class="text-sm font-medium text-gray-400">Stock</span>
             </div>
-            <h3 class="text-3xl font-bold text-gray-900">12,450</h3>
+            <h3 class="text-3xl font-bold text-gray-900">{{ isLoading ? '...' : stats.totalStock }}</h3>
             <p class="text-sm text-gray-500 mt-2">Unités en stock</p>
         </div>
 
@@ -54,7 +54,7 @@
                 </div>
                 <span class="text-sm font-medium text-gray-400">Commandes</span>
             </div>
-            <h3 class="text-3xl font-bold text-gray-900">28</h3>
+            <h3 class="text-3xl font-bold text-gray-900">{{ isLoading ? '...' : stats.pendingOrders }}</h3>
             <p class="text-sm text-orange-600 mt-2 font-medium">En attente</p>
         </div>
 
@@ -69,7 +69,7 @@
                 </div>
                 <span class="text-sm font-medium text-gray-400">Alertes</span>
             </div>
-            <h3 class="text-3xl font-bold text-gray-900">3</h3>
+            <h3 class="text-3xl font-bold text-gray-900">{{ isLoading ? '...' : stats.lowStockAlerts }}</h3>
             <p class="text-sm text-red-600 mt-2 font-medium">Stock critique</p>
         </div>
     </div>
