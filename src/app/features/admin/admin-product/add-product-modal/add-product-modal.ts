@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProductRequestDTO, Category, Product } from '../../models/admin-product.model';
-import { ProductService } from '../../../../api/product-service';
+import { ProductRequestDTO, Product } from '../../models/admin-product.model';
+import { CategoryResponseDTO } from '../../models/category.model';
 import { CategoryService } from '../../../../api/category-service';
 
 @Component({
@@ -21,13 +21,10 @@ export class AddProductModal implements OnChanges {
   @Output() submit = new EventEmitter<ProductRequestDTO>();
 
   productForm: FormGroup;
-  categories: Category[] = [];
+  categories: CategoryResponseDTO[] = [];
   isLoadingCategories = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private categoryService: CategoryService
-  ) {
+  constructor(private fb: FormBuilder, private categoryService: CategoryService) {
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       sku: ['', [Validators.required, Validators.pattern(/^[A-Za-z0-9-]+$/)]],
@@ -69,9 +66,9 @@ export class AddProductModal implements OnChanges {
     this.isLoadingCategories = true;
 
     this.categoryService.getCategories().subscribe({
-      next: (categories) => {
-        this.categories = categories;
-        console.log('Categories loaded:', categories);
+      next: (resp) => {
+        this.categories = resp.data;
+        console.log('Categories loaded:', this.categories);
         this.isLoadingCategories = false;
       },
       error: (error) => {

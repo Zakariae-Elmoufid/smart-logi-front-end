@@ -28,8 +28,8 @@
                             }
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900">{{ isEditMode ? 'Modifier le Produit' : 'Nouveau
-                        Produit' }}</h3>
+                    <h3 class="text-xl font-semibold text-gray-900">{{ isEditMode ? 'Modifier le Produit' :
+                        'NouveauProduit' }}</h3>
                 </div>
                 <button type="button"
                     class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
@@ -68,11 +68,10 @@
                     }
                     @if (backendErrors?.['name']) {
                     <div class="mt-1 text-sm text-red-500">
-                        <span>{{ backendErrors?.['name'] }}</span>
+                        <span>{{ backendErrors!['name'] }}</span>
                     </div>
                     }
                 </div>
-
                 <!-- SKU -->
                 <div>
                     <label for="sku" class="block text-sm font-medium text-gray-700 mb-1">
@@ -100,7 +99,7 @@
                     }
                     @if (backendErrors?.['sku']) {
                     <div class="mt-1 text-sm text-red-500">
-                        <span>{{ backendErrors?.['sku'] }}</span>
+                        <span>{{ backendErrors!['sku'] }}</span>
                     </div>
                     }
                 </div>
@@ -138,7 +137,7 @@
                     }
                     @if (backendErrors?.['categoryId']) {
                     <div class="mt-1 text-sm text-red-500">
-                        <span>{{ backendErrors?.['categoryId'] }}</span>
+                        <span>{{ backendErrors!['categoryId'] }}</span>
                     </div>
                     }
                 </div>
@@ -169,7 +168,7 @@
                         }
                         @if (backendErrors?.['purchasePrice']) {
                         <div class="mt-1 text-sm text-red-500">
-                            <span>{{ backendErrors?.['purchasePrice'] }}</span>
+                            <span>{{ backendErrors!['purchasePrice'] }}</span>
                         </div>
                         }
                     </div>
@@ -198,7 +197,7 @@
                         }
                         @if (backendErrors?.['sellingPrice']) {
                         <div class="mt-1 text-sm text-red-500">
-                            <span>{{ backendErrors?.['sellingPrice'] }}</span>
+                            <span>{{ backendErrors!['sellingPrice'] }}</span>
                         </div>
                         }
                     </div>
@@ -252,7 +251,8 @@
                             </path>
                         </svg>
                         }
-                        {{ isSubmitting ? (isEditMode ? 'Mise à jour...' : 'Création...') : (isEditMode ? 'Mettre àjour' : 'Créer le produit') }}
+                        {{ isSubmitting ? (isEditMode ? 'Mise à jour...' : 'Création...') : (isEditMode ? 'Mettre àjour'
+                        : 'Créer le produit') }}
                     </button>
                 </div>
             </form>
