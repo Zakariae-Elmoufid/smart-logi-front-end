@@ -1,0 +1,137 @@
+<aside
+    class="w-80 h-screen bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-900 shadow-2xl relative overflow-hidden">
+
+    <!-- Background Effects -->
+    <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
+
+    <!-- Logo Section -->
+    <div class="relative z-10 p-6 border-b border-white/10">
+        <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center shadow-lg backdrop-blur-sm">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-white tracking-tight">CLIENT</h3>
+                <p class="text-xs font-medium text-emerald-200 uppercase tracking-wider">Wholesale Portal</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-10 p-4 space-y-2 mt-2">
+
+        <!-- Dashboard -->
+        <a routerLink="/client" routerLinkActive="bg-white/10 text-white shadow-lg border-l-4 border-emerald-400"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="group flex items-center space-x-4 p-4 text-gray-300 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-300">
+
+            <div class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-emerald-500/20 transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <span class="text-sm font-semibold">Tableau de bord</span>
+            </div>
+
+            <svg class="w-4 h-4 text-gray-500 transform group-hover:translate-x-1 transition-transform duration-300 group-hover:text-emerald-400"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+
+        <!-- Products -->
+        <a routerLink="/client/products" routerLinkActive="bg-white/10 text-white shadow-lg border-l-4 border-emerald-400"
+            class="group flex items-center space-x-4 p-4 text-gray-300 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-300">
+
+            <div class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-emerald-500/20 transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <span class="text-sm font-semibold">Catalogue Produits</span>
+            </div>
+
+            <svg class="w-4 h-4 text-gray-500 transform group-hover:translate-x-1 transition-transform duration-300 group-hover:text-emerald-400"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+
+        <!-- Cart -->
+        <a routerLink="/client/cart" routerLinkActive="bg-white/10 text-white shadow-lg border-l-4 border-emerald-400"
+            class="group flex items-center space-x-4 p-4 text-gray-300 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-300">
+
+            <div class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-emerald-500/20 transition-all duration-300 relative">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                @if (cartService.itemCount() > 0) {
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                    {{ cartService.itemCount() }}
+                </span>
+                }
+            </div>
+
+            <div class="flex-1">
+                <span class="text-sm font-semibold">Panier</span>
+            </div>
+
+            @if (cartService.itemCount() > 0) {
+            <span class="px-2 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded-full font-medium">
+                {{ cartService.itemCount() }} articles
+            </span>
+            }
+        </a>
+
+        <!-- My Orders -->
+        <a routerLink="/client/orders" routerLinkActive="bg-white/10 text-white shadow-lg border-l-4 border-emerald-400"
+            class="group flex items-center space-x-4 p-4 text-gray-300 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-300">
+
+            <div class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-emerald-500/20 transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <span class="text-sm font-semibold">Mes Commandes</span>
+            </div>
+
+            <svg class="w-4 h-4 text-gray-500 transform group-hover:translate-x-1 transition-transform duration-300 group-hover:text-emerald-400"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+
+    </nav>
+
+    <!-- Bottom Section -->
+    <div class="absolute bottom-8 left-6 right-6 z-10">
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center shadow-lg">
+                    <span class="text-white font-bold">CL</span>
+                </div>
+                <div>
+                    <p class="text-white font-semibold text-sm">Client</p>
+                    <div class="flex items-center space-x-1">
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <p class="text-xs text-green-200">En ligne</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</aside>
