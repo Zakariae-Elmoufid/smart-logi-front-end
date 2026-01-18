@@ -28,7 +28,10 @@ export class ClientDashboard implements OnInit {
     this.isLoading = true;
     this.salesOrderService.getMyOrders().subscribe({
       next: (response) => {
-        this.recentOrders = response.data.slice(0, 5);
+        console.log(response.data);
+        this.recentOrders = Array.isArray(response.data)
+          ? response.data.slice(0, 5)
+          : [response.data];
         this.isLoading = false;
       },
       error: () => {
