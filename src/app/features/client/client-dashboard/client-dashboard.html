@@ -131,7 +131,7 @@
                     @for (order of recentOrders; track order.id) {
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm font-medium text-gray-900">{{ order.orderNumber }}</span>
+                            <span class="text-sm font-medium text-gray-900">#{{ order.id }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="text-sm text-gray-500">{{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
@@ -140,8 +140,8 @@
                             <span class="text-sm font-semibold text-gray-900">{{ order.totalAmount | number:'1.2-2' }} DH</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2.5 py-1 text-xs font-medium rounded-full {{ getStatusColor(order.status) }}">
-                                {{ getStatusLabel(order.status) }}
+                            <span class="px-2.5 py-1 text-xs font-medium rounded-full {{ getStatusColor(order.orderStatus) }}">
+                                {{ getStatusLabel(order.orderStatus) }}
                             </span>
                         </td>
                     </tr>

@@ -18,12 +18,12 @@ export class AdminSalesOrder implements OnInit {
   statusFilter = '';
   selectedOrder: SalesOrder | null = null;
   isProcessing = false;
-  
+
   // Delete confirmation
   showDeleteConfirm = false;
   orderToProcess: SalesOrder | null = null;
   processAction: 'confirm' | 'cancel' | null = null;
-  
+
   // Toast
   showToast = false;
   toastMessage = '';
@@ -52,12 +52,12 @@ export class AdminSalesOrder implements OnInit {
 
   filterOrders() {
     this.filteredOrders = this.orders.filter(order => {
-      const matchesSearch = !this.searchQuery || 
-        order.orderNumber?.toLowerCase().includes(this.searchQuery.toLowerCase());
-      
-      const matchesStatus = !this.statusFilter || 
-        order.status?.toUpperCase() === this.statusFilter.toUpperCase();
-      
+      const matchesSearch = !this.searchQuery ||
+        order.id?.toString().includes(this.searchQuery.toLowerCase());
+
+      const matchesStatus = !this.statusFilter ||
+        order.orderStatus?.toUpperCase() === this.statusFilter.toUpperCase();
+
       return matchesSearch && matchesStatus;
     });
   }
@@ -84,21 +84,21 @@ export class AdminSalesOrder implements OnInit {
 
   executeAction() {
     if (!this.orderToProcess || !this.processAction) return;
-    
+
     this.isProcessing = true;
-    const action$ = this.processAction === 'confirm' 
+    const action$ = this.processAction === 'confirm'
       ? this.salesOrderService.confirmOrder(this.orderToProcess.id)
       : this.salesOrderService.cancelOrder(this.orderToProcess.id);
-    
+
     action$.subscribe({
       next: () => {
         this.isProcessing = false;
         this.closeConfirmAction();
         this.loadOrders();
         this.displayToast(
-          this.processAction === 'confirm' 
-            ? 'Commande confirmée avec succès' 
-            : 'Commande annulée avec succès', 
+          this.processAction === 'confirm'
+            ? 'Commande confirmée avec succès'
+            : 'Commande annulée avec succès',
           'success'
         );
       },
@@ -111,7 +111,7 @@ export class AdminSalesOrder implements OnInit {
 
   getStatusColor(status: string): string {
     switch (status?.toUpperCase()) {
-      case 'PENDING':
+      case 'RESERVED':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'CONFIRMED':
         return 'bg-green-100 text-green-800 border-green-200';
@@ -126,7 +126,7 @@ export class AdminSalesOrder implements OnInit {
 
   getStatusLabel(status: string): string {
     switch (status?.toUpperCase()) {
-      case 'PENDING':
+      case 'RESERVED':
         return 'En attente';
       case 'CONFIRMED':
         return 'Confirmée';
@@ -149,14 +149,14 @@ export class AdminSalesOrder implements OnInit {
   }
 
   get pendingCount(): number {
-    return this.orders.filter(o => o.status?.toUpperCase() === 'PENDING').length;
+    return this.orders.filter(o => o.orderStatus?.toUpperCase() === 'RESERVED').length;
   }
 
   get confirmedCount(): number {
-    return this.orders.filter(o => o.status?.toUpperCase() === 'CONFIRMED').length;
+    return this.orders.filter(o => o.orderStatus?.toUpperCase() === 'CONFIRMED').length;
   }
 
   get cancelledCount(): number {
-    return this.orders.filter(o => o.status?.toUpperCase() === 'CANCELLED').length;
+    return this.orders.filter(o => o.orderStatus?.toUpperCase() === 'CANCELLED').length;
   }
 }

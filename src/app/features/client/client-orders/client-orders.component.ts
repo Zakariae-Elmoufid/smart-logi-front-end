@@ -25,7 +25,14 @@ export class ClientOrders implements OnInit {
     this.isLoading = true;
     this.salesOrderService.getMyOrders().subscribe({
       next: (response) => {
-        this.orders = response.data;
+        this.orders = response.data.map(order => ({
+          ...order,
+          totalAmount: order.orderLines?.reduce(
+            (sum, line) => sum + (line.price * line.quantityRequested),
+            0
+          ) ?? 0
+        }));
+        console.log(this.orders);
         this.isLoading = false;
       },
       error: () => {
@@ -36,6 +43,7 @@ export class ClientOrders implements OnInit {
 
   viewDetails(order: SalesOrder) {
     this.selectedOrder = order;
+
   }
 
   closeDetails() {
@@ -44,8 +52,12 @@ export class ClientOrders implements OnInit {
 
   getStatusColor(status: string): string {
     switch (status?.toUpperCase()) {
-      case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'CREATED':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+      case 'RESERVED':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+      case 'PARTIALLY_RESERVED':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200'
       case 'CONFIRMED':
         return 'bg-green-100 text-green-800 border-green-200';
       case 'CANCELLED':
@@ -59,8 +71,11 @@ export class ClientOrders implements OnInit {
 
   getStatusLabel(status: string): string {
     switch (status?.toUpperCase()) {
-      case 'PENDING':
-        return 'En attente';
+      case 'RESERVED':
+        return 'Réservée';
+      case 'PARTIALLY_RESERVED':
+        return 'Partiellement réservée';
+
       case 'CONFIRMED':
         return 'Confirmée';
       case 'CANCELLED':
@@ -86,4 +101,7 @@ export class ClientOrders implements OnInit {
         return 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
     }
   }
+
+
+
 }

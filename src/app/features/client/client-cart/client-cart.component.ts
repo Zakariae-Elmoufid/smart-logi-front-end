@@ -71,7 +71,7 @@ export class ClientCart {
     const orderRequest: SalesOrderRequest = {
       liens: this.cartItems.map(item => ({
         productId: item.productId,
-        quantity: item.quantity
+        quantityRequested: item.quantity
       }))
     };
 

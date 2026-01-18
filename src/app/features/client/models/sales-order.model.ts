@@ -1,29 +1,31 @@
 export interface SalesOrderLineRequest {
   productId: number;
-  quantity: number;
+  quantityRequested: number;
 }
 
 export interface SalesOrderRequest {
   liens: SalesOrderLineRequest[];
 }
 
-export interface SalesOrderLine {
+export interface SalesOrderLineResponse {
   id: number;
   productId: number;
   productName: string;
-  quantity: number;
-  unitPrice: number;
+  quantityRequested: number;
+  quantityReserved: number;
+  quantityBackorder: number;
+  price: number;
   totalPrice: number;
 }
 
 export interface SalesOrder {
   id: number;
-  orderNumber: string;
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELED';
+  clientId: number;
+  orderStatus: 'CREATED' | 'RESERVED' | 'SHIPPED' | 'DELIVERED' | 'PARTIALLY_RESERVED' | 'CONFIRMED' | 'CANCELED';
   createdAt: string;
-  totalAmount: number;
-  clientName?: string;
-  lines: SalesOrderLine[];
+  orderLines: SalesOrderLineResponse[];
+  message: string;
+  totalAmount?: number;
 }
 
 export interface ApiResponse<T> {
