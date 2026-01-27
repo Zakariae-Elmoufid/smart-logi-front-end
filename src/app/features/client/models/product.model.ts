@@ -10,25 +10,6 @@ export interface Product {
   category?: Category;
 }
 
-export interface ProductsQuery {
-  page: number;
-  size: number;
-  sort: string; // ex: 'name,asc'
-  search: string;
-  category: string;
-  active: boolean;
-}
-
-export interface ProductsState {
-  query: ProductsQuery;
-  items: Product[];
-  totalElements: number;
-  totalPages: number;
-  loading: boolean;
-  error: { status: number; message: string; detail?: string } | null;
-}
-
-
 export interface Category {
   id: number;
   name: string;
@@ -44,8 +25,10 @@ export interface ProductRequestDTO {
   categoryId: number;
 }
 
-export interface ApiResponse<T> {
-  message: string;
+export interface ApiError {
+  timestamp: string;
   status: number;
-  data: T;
+  message: string;
+  path: string;
+  detail?: string;
 }

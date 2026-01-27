@@ -2,16 +2,21 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, switchMap, throwError, BehaviorSubject, filter, take } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { TokenService } from '../services/token.service';
 
 let isRefreshing = false;
 let refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
 export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
+  const tokenService = inject(TokenService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && !req.url.includes('/auth/refresh')) {
+      // Only try to refresh if we have a refresh token and got a 401
+      const refreshToken = tokenService.getRefreshToken();
+      
+      if (error.status === 401 && !req.url.includes('/auth/refresh') && refreshToken) {
 
         if (!isRefreshing) {
           isRefreshing = true;

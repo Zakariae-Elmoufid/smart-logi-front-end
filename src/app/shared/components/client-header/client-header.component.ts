@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../../api/cart.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { User } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-client-header',
@@ -12,7 +14,7 @@ import { CartService } from '../../../api/cart.service';
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-xl font-semibold text-gray-800">Portail Client</h2>
-          <p class="text-sm text-gray-500">Bienvenue sur votre espace de commande</p>
+          <p class="text-sm text-gray-500">Bienvenue, {{ currentUser?.firstName }} {{ currentUser?.lastName }}</p>
         </div>
         
         <div class="flex items-center gap-4">
@@ -37,11 +39,31 @@ import { CartService } from '../../../api/cart.service';
             <p class="text-lg font-bold text-emerald-600">{{ cartService.totalAmount() | number:'1.2-2' }} DH</p>
           </div>
           }
+
+          <!-- User Avatar -->
+          <div class="flex items-center gap-3 pl-4 border-l border-gray-200">
+            <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
+              {{ currentUser?.firstName?.charAt(0) }}{{ currentUser?.lastName?.charAt(0) }}
+            </div>
+            <div class="hidden md:block">
+              <p class="text-sm font-medium text-gray-900">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</p>
+              <p class="text-xs text-gray-500">{{ currentUser?.email }}</p>
+            </div>
+          </div>
         </div>
       </div>
     </header>
   `,
 })
-export class ClientHeader {
-  constructor(public cartService: CartService) {}
+export class ClientHeader implements OnInit {
+  currentUser: User | null = null;
+
+  constructor(
+    public cartService: CartService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit() {
+    this.currentUser = this.authService.getCurrentUser();
+  }
 }

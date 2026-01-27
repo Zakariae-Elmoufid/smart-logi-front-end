@@ -165,7 +165,7 @@ export class LoginComponent {
                 this.router.navigate(['/admin']);
                 break;
               case 'ROLE_WAREHOUSE_MANAGER':
-                this.router.navigate(['/warehouse']);
+                this.router.navigate(['/manager']);
                 break;
               case 'ROLE_CLIENT':
                 this.router.navigate(['/client']);

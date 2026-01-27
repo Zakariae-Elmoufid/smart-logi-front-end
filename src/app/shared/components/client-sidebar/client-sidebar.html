@@ -120,14 +120,14 @@
     <div class="absolute bottom-8 left-6 right-6 z-10">
         <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center shadow-lg">
-                    <span class="text-white font-bold">CL</span>
+                <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg">
+                    <span class="text-white font-bold">{{ currentUser?.firstName?.charAt(0) }}{{ currentUser?.lastName?.charAt(0) }}</span>
                 </div>
-                <div>
-                    <p class="text-white font-semibold text-sm">Client</p>
+                <div class="flex-1 min-w-0">
+                    <p class="text-white font-semibold text-sm truncate">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</p>
                     <div class="flex items-center space-x-1">
                         <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                        <p class="text-xs text-green-200">En ligne</p>
+                        <p class="text-xs text-green-200 truncate">{{ currentUser?.email }}</p>
                     </div>
                 </div>
             </div>

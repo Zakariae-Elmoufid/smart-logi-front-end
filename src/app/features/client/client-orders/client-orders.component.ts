@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SalesOrderService } from '../../../api/sales-order.service';
@@ -12,10 +12,13 @@ import { SalesOrder } from '../models/sales-order.model';
 })
 export class ClientOrders implements OnInit {
   orders: SalesOrder[] = [];
-  isLoading = false;
+  isLoading = true;
   selectedOrder: SalesOrder | null = null;
 
-  constructor(private salesOrderService: SalesOrderService) {}
+  constructor(
+    private salesOrderService: SalesOrderService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.loadOrders();
@@ -23,22 +26,35 @@ export class ClientOrders implements OnInit {
 
   loadOrders() {
     this.isLoading = true;
+    this.cdr.detectChanges();
+    
     this.salesOrderService.getMyOrders().subscribe({
       next: (response) => {
-        this.orders = response.data.map(order => ({
+        const ordersData = Array.isArray(response.data) ? response.data : (response.data ? [response.data] : []);
+        this.orders = ordersData.map(order => ({
           ...order,
-          totalAmount: order.orderLines?.reduce(
-            (sum, line) => sum + (line.price * line.quantityRequested),
-            0
-          ) ?? 0
+          totalAmount: this.calculateOrderTotal(order)
         }));
-        console.log(this.orders);
+        console.log('Orders with totals:', this.orders);
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error loading orders:', err);
+        this.orders = [];
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  calculateOrderTotal(order: SalesOrder): number {
+    if (!order.orderLines || order.orderLines.length === 0) return 0;
+    return order.orderLines.reduce((sum, line) => {
+      const price = line.price || 0;
+      const qty = line.quantityRequested || 0;
+      return sum + (price * qty);
+    }, 0);
   }
 
   viewDetails(order: SalesOrder) {

@@ -3,7 +3,7 @@
     <div class="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-8 text-white shadow-lg">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-3xl font-bold mb-2">Bienvenue sur votre espace client</h1>
+                <h1 class="text-3xl font-bold mb-2">Bienvenue, {{ currentUser?.firstName }} {{ currentUser?.lastName }}</h1>
                 <p class="text-emerald-100">Consultez notre catalogue et passez vos commandes en ligne</p>
             </div>
             <a routerLink="/client/products"

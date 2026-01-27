@@ -1,14 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule, NgClass } from '@angular/common';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, forkJoin, Observable, Subject, takeUntil, take } from 'rxjs';
 import { ProductService } from '../../../api/product-service';
 import { CartService } from '../../../api/cart.service';
 import { InventoryService } from '../../../api/inventory.service';
-import { Product } from '../../admin/models/admin-product.model';
-import { InventoryResponseDTO } from '../../manager/models/inventory.model';
+import { ApiError, Product } from '../models/product.model';
+import { RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
+import * as ProductsSelectors from './store/products.selectors';
+import { ProductsQuery } from './store/products.state';
+import * as ProductsActions from './store/products.actions';
 
-// Extended product interface with stock info
 interface ProductWithStock extends Product {
   stockQuantity?: number;
 }
@@ -16,144 +19,154 @@ interface ProductWithStock extends Product {
 @Component({
   selector: 'app-client-product-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './client-product-list.html',
+  styleUrl: './client-product-list.components.css',
+  imports: [
+    RouterLink,
+    CommonModule,
+    ReactiveFormsModule
+  ],
 })
-export class ClientProductList implements OnInit {
-  products: ProductWithStock[] = [];
-  filteredProducts: ProductWithStock[] = [];
-  isLoading = false;
-  searchQuery = '';
-  selectedCategory = '';
+export class ClientProductList implements OnInit, OnDestroy {
+
+  products$: Observable<Product[]>;
+  loading$: Observable<boolean>;
+  error$: Observable<{ status: number; message: string; detail?: string } | null>;
+  totals$: Observable<any>;
+  isEmpty$: Observable<boolean>;
+  query$: Observable<ProductsQuery>;
+
+  searchControl = new FormControl('');
+  categoryControl = new FormControl('');
+  sizeControl = new FormControl(10);
+
+  pageSizes = [10, 20, 50];
+
+  private destroy$ = new Subject<void>();
+
+  // Legacy local state - kept for categories dropdown
   categories: string[] = [];
-  
+
   // Quantity inputs for each product
   quantities: { [productId: number]: number } = {};
-  
+
   // Toast
   showToast = false;
   toastMessage = '';
   toastType: 'success' | 'error' = 'success';
 
+
+  currentSort = { field: 'name', direction: 'asc' };
   constructor(
     private productService: ProductService,
     private inventoryService: InventoryService,
-    public cartService: CartService
-  ) {}
-
-  ngOnInit() {
-    this.loadProducts();
+    public cartService: CartService,
+    private store: Store
+  ) {
+    this.products$ = this.store.select(ProductsSelectors.selectProductsItems);
+    this.loading$ = this.store.select(ProductsSelectors.selectProductsLoading);
+    this.error$ = this.store.select(ProductsSelectors.selectProductsError);
+    this.totals$ = this.store.select(ProductsSelectors.selectProductsTotals);
+    this.isEmpty$ = this.store.select(ProductsSelectors.selectIsEmpty);
+    this.query$ = this.store.select(ProductsSelectors.selectProductsQuery);
   }
 
-  loadProducts() {
-    this.isLoading = true;
-    
-    // Load both products and inventory data
-    forkJoin({
-      products: this.productService.getProducts(),
-      inventory: this.inventoryService.getAll()
-    }).subscribe({
-      next: ({ products, inventory }) => {
-        // Create a map of product name to total stock across all warehouses
-        const stockMap = new Map<string, number>();
-        inventory.data.forEach((inv: InventoryResponseDTO) => {
-          const currentStock = stockMap.get(inv.productName) || 0;
-          stockMap.set(inv.productName, currentStock + inv.quantityOnHand);
-        });
-        
-        // Merge stock info with products
-        this.products = products.data
-          .filter((p: Product) => p.active)
-          .map((p: Product) => ({
-            ...p,
-            stockQuantity: stockMap.get(p.name) || 0
-          }));
-        
-        this.filteredProducts = [...this.products];
-        this.extractCategories();
-        this.initializeQuantities();
-        this.isLoading = false;
-      },
-      error: () => {
-        this.isLoading = false;
-        this.displayToast('Erreur lors du chargement des produits', 'error');
-      }
+
+  ngOnInit(): void {
+    // Debug: Log store state
+    this.products$.subscribe(products => console.log('Products from store:', products));
+    this.loading$.subscribe(loading => console.log('Loading state:', loading));
+    this.error$.subscribe(error => console.log('Error state:', error));
+
+    // Initial load - dispatch loadProducts with the current query from state (only once)
+    this.query$.pipe(
+      take(1)
+    ).subscribe(query => {
+      console.log('Dispatching loadProducts with query:', query);
+      this.store.dispatch(ProductsActions.loadProducts({ query }));
     });
+
+    // Recherche avec debounce
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(search => {
+        this.store.dispatch(ProductsActions.setQuery({
+          partialQuery: { search: search || '', page: 0 }
+        }));
+      });
+
+    // Filtre catégorie
+    this.categoryControl.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(category => {
+        this.store.dispatch(ProductsActions.setQuery({
+          partialQuery: { category: category || '', page: 0 }
+        }));
+      });
+
+    // Taille de page
+    this.sizeControl.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(size => {
+        this.store.dispatch(ProductsActions.setQuery({
+          partialQuery: { size: size || 10, page: 0 }
+        }));
+      });
   }
 
-  extractCategories() {
-    const categorySet = new Set<string>();
-    this.products.forEach(p => {
-      if (p.category?.name) {
-        categorySet.add(p.category.name);
-      }
-    });
-    this.categories = Array.from(categorySet).sort();
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  initializeQuantities() {
-    this.products.forEach(p => {
-      this.quantities[p.id] = 1;
-    });
+  onPageChange(page: number): void {
+    this.store.dispatch(ProductsActions.setQuery({
+      partialQuery: { page }
+    }));
   }
 
-  filterProducts() {
-    this.filteredProducts = this.products.filter(p => {
-      const matchesSearch = !this.searchQuery || 
-        p.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        p.sku?.toLowerCase().includes(this.searchQuery.toLowerCase());
-      
-      const matchesCategory = !this.selectedCategory || 
-        p.category?.name === this.selectedCategory;
-      
-      return matchesSearch && matchesCategory;
-    });
+  onSort(field: string): void {
+    const direction =
+      this.currentSort.field === field && this.currentSort.direction === 'asc'
+        ? 'desc'
+        : 'asc';
+
+    this.currentSort = { field, direction };
+
+    this.store.dispatch(ProductsActions.setQuery({
+      partialQuery: { sort: `${field},${direction}` }
+    }));
   }
 
-  addToCart(product: ProductWithStock) {
-    const quantity = this.quantities[product.id] || 1;
-    
-    if (quantity < 1) {
-      this.displayToast('Quantité invalide', 'error');
-      return;
-    }
-    
-    // Check stock availability
-    if (product.stockQuantity !== undefined && quantity > product.stockQuantity) {
-      this.displayToast(`Stock insuffisant (${product.stockQuantity} disponibles)`, 'error');
-      return;
-    }
-    
-    this.cartService.addItem({
-      productId: product.id,
-      productName: product.name,
-      unitPrice: product.sellingPrice,
-      stock: product.stockQuantity || 0
-    }, quantity);
-    
-    this.quantities[product.id] = 1;
-    this.displayToast(`${product.name} ajouté au panier`, 'success');
+  onReset(): void {
+    this.searchControl.setValue('', { emitEvent: false });
+    this.categoryControl.setValue('', { emitEvent: false });
+    this.sizeControl.setValue(10, { emitEvent: false });
+    this.store.dispatch(ProductsActions.resetQuery());
   }
 
-  incrementQuantity(productId: number) {
-    const product = this.products.find(p => p.id === productId);
-    if (product && (product.stockQuantity === undefined || this.quantities[productId] < product.stockQuantity)) {
-      this.quantities[productId]++;
-    }
+  onClearError(): void {
+    this.store.dispatch(ProductsActions.clearError());
   }
 
-  decrementQuantity(productId: number) {
-    if (this.quantities[productId] > 1) {
-      this.quantities[productId]--;
-    }
+  getSortIcon(field: string): string {
+    if (this.currentSort.field !== field) return '⇅';
+    return this.currentSort.direction === 'asc' ? '↑' : '↓';
   }
 
-  displayToast(message: string, type: 'success' | 'error') {
-    this.toastMessage = message;
-    this.toastType = type;
-    this.showToast = true;
-    setTimeout(() => {
-      this.showToast = false;
-    }, 3000);
+  getStatusBadgeClass(active: boolean): string {
+    return active ? 'badge-success' : 'badge-danger';
   }
+
+  trackByProductId(index: number, product: Product): number {
+    return product.id;
+  }
+
+  protected readonly Math = Math;
 }
+
+
