@@ -14,12 +14,13 @@ import {
 export class SalesOrderService {
   private clientApiUrl = `${environment.apiUrl}/client`;
   private adminApiUrl = `${environment.apiUrl}/admin`;
+  private managerApiUrl = `${environment.apiUrl}/manager`;
 
   constructor(private http: HttpClient) {}
 
   // Client methods
   createOrder(order: SalesOrderRequest): Observable<ApiResponse<SalesOrder>> {
-    return this.http.post<ApiResponse<SalesOrder>>(`${this.clientApiUrl}/salse-order`, order);
+      return this.http.post<ApiResponse<SalesOrder>>(`${this.clientApiUrl}/salse-order`, order);
   }
 
   getClientOrders(): Observable<ApiResponse<SalesOrder[]>> {
@@ -45,5 +46,10 @@ export class SalesOrderService {
 
   cancelOrder(id: number): Observable<ApiResponse<SalesOrder>> {
     return this.http.get<ApiResponse<SalesOrder>>(`${this.adminApiUrl}/salse-order/${id}/cancel`);
+  }
+
+  // Manager methods
+  getManagerOrders(): Observable<ApiResponse<SalesOrder[]>> {
+    return this.http.get<ApiResponse<SalesOrder[]>>(`${this.managerApiUrl}/sales-order`);
   }
 }

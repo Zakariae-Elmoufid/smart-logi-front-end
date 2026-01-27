@@ -1,8 +1,23 @@
 <div class="space-y-6">
     <!-- Welcome Section -->
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <h1 class="text-2xl font-bold text-gray-900">Bienvenue, Manager</h1>
-        <p class="text-gray-500 mt-1">Voici un aperçu de l'activité de vos entrepôts aujourd'hui.</p>
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Bienvenue, {{ currentUser?.firstName }} {{
+                    currentUser?.lastName }}</h1>
+                <p class="text-gray-500 mt-1">Voici un aperçu de l'activité de vos entrepôts aujourd'hui.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                    {{ currentUser?.firstName?.charAt(0) }}{{ currentUser?.lastName?.charAt(0) }}
+                </div>
+                <div class="hidden md:block">
+                    <p class="text-sm font-medium text-gray-900">{{ currentUser?.email }} </p>
+                    <p class="text-xs text-purple-600 font-medium">Gestionnaire d'entrepôt</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Stats Grid -->

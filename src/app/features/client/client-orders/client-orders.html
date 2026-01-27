@@ -152,7 +152,7 @@
                                         <td class="px-4 py-3 text-sm text-gray-600 text-center">{{ line.quantityRequested }}</td>
                                         <td class="px-4 py-3 text-sm text-gray-600 text-center">{{ line.quantityReserved }}</td>
                                         <td class="px-4 py-3 text-sm text-gray-600 text-right">{{ line.price | number:'1.2-2' }} DH</td>
-                                        <td class="px-4 py-3 text-sm font-medium text-gray-900 text-right">{{line.price * line.quantityReserved  | number:'1.2-2' }} DH</td>
+                                        <td class="px-4 py-3 text-sm font-medium text-gray-900 text-right">{{ (line.price || 0) * (line.quantityRequested || 0) | number:'1.2-2' }} DH</td>
                                     </tr>
                                     }
                                 </tbody>

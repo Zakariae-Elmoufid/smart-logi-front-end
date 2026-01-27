@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, tap, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { TokenService } from './token.service';
-import {  RegisterRequest } from '../models/register-request.model';
+import { RegisterRequest } from '../models/register-request.model';
 import { User } from '../models/user.model';
-import {LoginRequest} from '../models/login-request.model';
-import {JwtTokens} from '../models/jwt-tokens.model';
+import { LoginRequest } from '../models/login-request.model';
+import { JwtTokens } from '../models/jwt-tokens.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -23,24 +23,23 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private tokenService: TokenService,
-    private router: Router
+    private router: Router,
   ) {
     this.loadUserFromToken();
   }
 
-
   login(credentials: LoginRequest): Observable<JwtTokens> {
     return this.http.post<JwtTokens>(`${this.apiUrl}/login`, credentials).pipe(
-      tap(tokens => {
+      tap((tokens) => {
         console.log(tokens);
         this.tokenService.setTokens(tokens.accessToken, tokens.refreshToken);
         this.loadUserFromToken();
         this.isAuthenticated.set(true);
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error('Login failed', err);
         return throwError(() => err);
-      })
+      }),
     );
   }
 
@@ -49,10 +48,10 @@ export class AuthService {
       tap(() => {
         console.log('Registration successful');
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error('Registration failed', err);
         return throwError(() => err);
-      })
+      }),
     );
   }
 
@@ -71,15 +70,15 @@ export class AuthService {
     }
 
     return this.http.post<JwtTokens>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
-      tap(tokens => {
+      tap((tokens) => {
         this.tokenService.setTokens(tokens.accessToken, tokens.refreshToken);
         this.loadUserFromToken();
       }),
-      catchError(err => {
+      catchError((err) => {
         console.error('Token refresh failed', err);
         this.logout();
         return throwError(() => err);
-      })
+      }),
     );
   }
 
@@ -91,6 +90,7 @@ export class AuthService {
   }
 
   getCurrentUser(): User | null {
+    console.log(this.currentUserSubject.value);
     return this.currentUserSubject.value;
   }
 
@@ -104,24 +104,26 @@ export class AuthService {
     return user ? roles.includes(user.role) : false;
   }
 
-
   private loadUserFromToken(): void {
     const token = this.tokenService.getAccessToken();
 
     if (token && !this.tokenService.isTokenExpired(token)) {
       try {
         const payload = this.tokenService.decodeToken(token);
+        console.log('JWT Payload:', payload);
 
-
+        // Handle different JWT structures
+        // sub usually contains email or user identifier
+        const email = payload.email || payload.sub;
+        
         const user: User = {
-          id: payload.sub || payload.userId,
-          email: payload.email,
-          firstName: payload.firstName,
-          lastName: payload.lastName,
-          role: payload.role,
-          enabled: true
+          id: payload.userId || payload.id || payload.sub,
+          email: email,
+          firstName: payload.firstName || payload.first_name || email?.split('@')[0] || 'Utilisateur',
+          lastName: payload.lastName || payload.last_name || '',
+          role: payload.role || payload.roles?.[0],
+          enabled: true,
         };
-
         this.currentUserSubject.next(user);
 
         this.isAuthenticated.set(true);

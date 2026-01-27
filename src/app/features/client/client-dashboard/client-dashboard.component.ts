@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../../api/cart.service';
 import { SalesOrderService } from '../../../api/sales-order.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { User } from '../../../core/models/user.model';
 import { SalesOrder } from '../models/sales-order.model';
 
 @Component({
@@ -13,31 +15,56 @@ import { SalesOrder } from '../models/sales-order.model';
 })
 export class ClientDashboard implements OnInit {
   recentOrders: SalesOrder[] = [];
-  isLoading = false;
+  isLoading = true;
+  currentUser: User | null = null;
 
   constructor(
     public cartService: CartService,
-    private salesOrderService: SalesOrderService
+    private salesOrderService: SalesOrderService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
+    this.currentUser = this.authService.getCurrentUser();
     this.loadRecentOrders();
   }
 
   loadRecentOrders() {
     this.isLoading = true;
+    this.cdr.detectChanges();
+    
     this.salesOrderService.getMyOrders().subscribe({
       next: (response) => {
-        console.log(response.data);
-        this.recentOrders = Array.isArray(response.data)
-          ? response.data.slice(0, 5)
-          : [response.data];
+        console.log('Orders loaded:', response.data);
+        if (response.data) {
+          const ordersData = Array.isArray(response.data) ? response.data : [response.data];
+          this.recentOrders = ordersData.slice(0, 5).map(order => ({
+            ...order,
+            totalAmount: this.calculateOrderTotal(order)
+          }));
+        } else {
+          this.recentOrders = [];
+        }
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error loading orders:', err);
+        this.recentOrders = [];
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  calculateOrderTotal(order: SalesOrder): number {
+    if (!order.orderLines || order.orderLines.length === 0) return 0;
+    return order.orderLines.reduce((sum, line) => {
+      const price = line.price || 0;
+      const qty = line.quantityRequested || 0;
+      return sum + (price * qty);
+    }, 0);
   }
 
   getStatusColor(status: string): string {

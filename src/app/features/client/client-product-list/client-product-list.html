@@ -1,161 +1,157 @@
-<div class="p-6 space-y-6">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Catalogue Produits</h1>
-            <p class="text-gray-500 mt-1">Consultez nos produits et ajoutez-les à votre panier</p>
-        </div>
+<!-- src/app/pages/client/products/products-list/products-list.component.html -->
+
+<div class="products-container">
+  <div class="page-header">
+    <h1>Gestion des Produits</h1>
+    <button class="btn btn-secondary" (click)="onReset()">
+      Réinitialiser
+    </button>
+  </div>
+
+  <!-- Zone de filtres -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label for="search">Rechercher  Nom</label>
+      <input
+        id="search"
+        type="text"
+        [formControl]="searchControl"
+        placeholder="Ex: PROD-001 ou Laptop"
+        class="form-control"
+      />
     </div>
 
-    <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-        <div class="flex flex-col md:flex-row gap-4">
-            <!-- Search -->
-            <div class="flex-1 relative">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none"
-                    stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterProducts()"
-                    placeholder="Rechercher un produit..."
-                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-            </div>
-
-            <!-- Category Filter -->
-            <select [(ngModel)]="selectedCategory" (ngModelChange)="filterProducts()"
-                class="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-                <option value="">Toutes les catégories</option>
-                @for (category of categories; track category) {
-                <option [value]="category">{{ category }}</option>
-                }
-            </select>
-        </div>
+    <div class="filter-group">
+      <label for="category">Catégorie</label>
+      <select id="category" [formControl]="categoryControl" class="form-control">
+        <option value="">Toutes les catégories</option>
+        <option *ngFor="let cat of categories.slice(1)" [value]="cat">
+          {{ cat }}
+        </option>
+      </select>
     </div>
 
-    <!-- Products Grid -->
-    @if (isLoading) {
-    <div class="flex items-center justify-center py-20">
-        <div class="text-center">
-            <div class="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p class="text-gray-500 mt-4">Chargement des produits...</p>
-        </div>
+    <div class="filter-group">
+      <label for="pageSize">Éléments par page</label>
+      <select id="pageSize" [formControl]="sizeControl" class="form-control">
+        <option *ngFor="let size of pageSizes" [value]="size">
+          {{ size }}
+        </option>
+      </select>
     </div>
-    } @else if (filteredProducts.length === 0) {
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
-        </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-1">Aucun produit trouvé</h3>
-        <p class="text-gray-500">Essayez de modifier vos critères de recherche</p>
+  </div>
+
+  <!-- Toast d'erreur -->
+  <div *ngIf="error$ | async as error" class="error-toast">
+    <div class="error-content">
+      <strong>Erreur {{ error.status }}</strong>
+      <p>{{ error.message }}</p>
+      <small *ngIf="error.detail">{{ error.detail }}</small>
     </div>
-    } @else {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        @for (product of filteredProducts; track product.id) {
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-            <!-- Product Image Placeholder -->
-            <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-            </div>
+    <button class="close-btn" (click)="onClearError()">&times;</button>
+  </div>
 
-            <div class="p-4">
-                <!-- Category Badge -->
-                @if (product.category?.name) {
-                <span class="inline-block px-2 py-1 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-full mb-2">
-                    {{ product.category?.name }}
-                </span>
-                }
+  <!-- État de chargement -->
+  <div *ngIf="loading$ | async" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Chargement des produits...</p>
+  </div>
 
-                <!-- Product Name -->
-                <h3 class="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">{{ product.name }}</h3>
+  <!-- Tableau des produits -->
+  <div *ngIf="!(loading$ | async)" class="table-container">
+    <table *ngIf="!(isEmpty$ | async)" class="products-table">
+      <thead>
+      <tr>
+        <th (click)="onSort('sku')" class="sortable">
+          SKU {{ getSortIcon('sku') }}
+        </th>
+        <th (click)="onSort('name')" class="sortable">
+          Nom {{ getSortIcon('name') }}
+        </th>
+        <th (click)="onSort('category')" class="sortable">
+          Catégorie {{ getSortIcon('category') }}
+        </th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let product of products$ | async; trackBy: trackByProductId">
+        <td class="sku-cell">{{ product.sku }}</td>
+        <td class="name-cell">{{ product.name }}</td>
+        <td>{{ product.category }}</td>
+        <td>
+            <span
+              class="badge"
+              [ngClass]="getStatusBadgeClass(product.active)">
+              {{ product.active ? 'Actif' : 'Inactif' }}
+            </span>
+        </td>
+        <td>
+          <button
+            class="btn btn-sm btn-primary"
+            [routerLink]="['/client/products', product.id]">
+            Voir
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
 
-                <!-- SKU -->
-                @if (product.sku) {
-                <p class="text-xs text-gray-400 mb-2">SKU: {{ product.sku }}</p>
-                }
+    <!-- État vide -->
+    <div *ngIf="isEmpty$ | async" class="empty-state">
+      <div class="empty-icon">📦</div>
+      <h3>Aucun produit trouvé</h3>
+      <p>Essayez de modifier vos critères de recherche ou de réinitialiser les filtres.</p>
+    </div>
+  </div>
 
-                <!-- Description -->
+  <!-- Message d'erreur sous le tableau -->
+  <div *ngIf="(error$ | async) && !(loading$ | async)" class="error-message">
+    <p>
+      Une erreur est survenue lors du chargement des produits.
+      Veuillez réessayer ou contacter le support si le problème persiste.
+    </p>
+  </div>
 
-
-                <!-- Price -->
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-2xl font-bold text-emerald-600">{{ product.sellingPrice | number:'1.2-2' }} DH</span>
-                    <span class="text-sm {{ product.stockQuantity && product.stockQuantity > 0 ? 'text-green-600' : 'text-red-600' }}">
-                        {{ product.stockQuantity && product.stockQuantity > 0 ? product.stockQuantity + ' en stock' : 'Rupture' }}
-                    </span>
-                </div>
-
-                <!-- Quantity Selector & Add to Cart -->
-                @if (product.stockQuantity && product.stockQuantity > 0) {
-                <div class="flex items-center gap-2">
-                    <!-- Quantity Selector -->
-                    <div class="flex items-center border border-gray-300 rounded-lg">
-                        <button (click)="decrementQuantity(product.id)"
-                            class="px-3 py-2 hover:bg-gray-100 transition-colors"
-                            [disabled]="quantities[product.id] <= 1">
-                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                            </svg>
-                        </button>
-                        <input type="number" [(ngModel)]="quantities[product.id]" min="1" [max]="product.stockQuantity"
-                            class="w-14 text-center border-x border-gray-300 py-2 focus:outline-none">
-                        <button (click)="incrementQuantity(product.id)"
-                            class="px-3 py-2 hover:bg-gray-100 transition-colors"
-                            [disabled]="quantities[product.id] >= (product.stockQuantity || 0)">
-                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Add to Cart Button -->
-                    <button (click)="addToCart(product)"
-                        class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        Ajouter
-                    </button>
-                </div>
-                } @else {
-                <button disabled
-                    class="w-full bg-gray-300 text-gray-500 py-2.5 px-4 rounded-lg font-medium cursor-not-allowed">
-                    Rupture de stock
-                </button>
-                }
-            </div>
-        </div>
-        }
+  <!-- Pagination -->
+  <div *ngIf="totals$ | async as totals" class="pagination-section">
+    <div class="pagination-info">
+      Affichage de {{ (totals.currentPage * totals.size) + 1 }} à
+      {{ Math.min((totals.currentPage + 1) * totals.size, totals.totalElements) }}
+      sur {{ totals.totalElements }} résultat(s)
     </div>
 
-    <!-- Results Count -->
-    <div class="text-center text-sm text-gray-500">
-        {{ filteredProducts.length }} produit(s) trouvé(s)
-    </div>
-    }
+    <div class="pagination-controls">
+      <button
+        class="btn btn-sm"
+        [disabled]="totals.currentPage === 0"
+        (click)="onPageChange(0)">
+        Premier
+      </button>
+      <button
+        class="btn btn-sm"
+        [disabled]="totals.currentPage === 0"
+        (click)="onPageChange(totals.currentPage - 1)">
+        Précédent
+      </button>
 
-    <!-- Toast Notification -->
-    @if (showToast) {
-    <div class="fixed bottom-6 right-6 z-50 animate-slide-up">
-        <div class="flex items-center gap-3 px-6 py-4 rounded-xl shadow-lg {{ toastType === 'success' ? 'bg-green-600' : 'bg-red-600' }} text-white">
-            @if (toastType === 'success') {
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            } @else {
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            }
-            <span class="font-medium">{{ toastMessage }}</span>
-        </div>
+      <span class="page-indicator">
+        Page {{ totals.currentPage + 1 }} / {{ totals.totalPages || 1 }}
+      </span>
+
+      <button
+        class="btn btn-sm"
+        [disabled]="totals.currentPage >= totals.totalPages - 1"
+        (click)="onPageChange(totals.currentPage + 1)">
+        Suivant
+      </button>
+      <button
+        class="btn btn-sm"
+        [disabled]="totals.currentPage >= totals.totalPages - 1"
+        (click)="onPageChange(totals.totalPages - 1)">
+        Dernier
+      </button>
     </div>
-    }
+  </div>
 </div>

@@ -1,36 +1,34 @@
 import { Routes } from '@angular/router';
-import { ManagerLayout } from './manager-layout/manager-layout.component';
-import { ManagerDashboard } from './manager-dashboard/manager-dashboard.component';
-import { WarehouseList } from './warehouses/warehouse-list/warehouse-list.component';
-import { InventoryList } from './inventory/inventory-list/inventory-list.component';
-import { PurchaseOrderComponent } from './purchase-order/purchase-order.component';
-import { CarrierList } from './carriers/carrier-list/carrier-list.component';
 
 export const MANAGER_ROUTES: Routes = [
-    {
+  {
+    path: '',
+    loadComponent: () => import('./manager-layout/manager-layout.component').then(m => m.ManagerLayout),
+    children: [
+      {
         path: '',
-        component: ManagerLayout,
-        children: [
-            {
-                path: '',
-                component: ManagerDashboard
-            },
-            {
-                path: 'warehouses',
-                component: WarehouseList
-            },
-            {
-                path: 'inventory',
-                component: InventoryList
-            },
-            {
-                path: 'orders',
-                component: PurchaseOrderComponent
-            },
-            {
-                path: 'carriers',
-                component: CarrierList
-            }
-        ]
-    }
+        loadComponent: () => import('./manager-dashboard/manager-dashboard.component').then(m => m.ManagerDashboard)
+      },
+      {
+        path: 'warehouse',
+        loadComponent: () => import('./warehouses/warehouse-list/warehouse-list.component').then(m => m.WarehouseList)
+      },
+      {
+        path: 'inventory',
+        loadComponent: () => import('./inventory/inventory-list/inventory-list.component').then(m => m.InventoryList)
+      },
+      {
+        path: 'orders',
+        loadComponent: () => import('./purchase-order/purchase-order.component').then(m => m.PurchaseOrderComponent)
+      },
+      {
+        path: 'sales-orders',
+        loadComponent: () => import('./sales-order/manager-sales-order.component').then(m => m.ManagerSalesOrderComponent)
+      },
+      {
+        path: 'carriers',
+        loadComponent: () => import('./carriers/carrier-list/carrier-list.component').then(m => m.CarrierList)
+      }
+    ]
+  }
 ];
