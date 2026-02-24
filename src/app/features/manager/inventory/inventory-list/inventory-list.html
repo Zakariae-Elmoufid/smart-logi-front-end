@@ -1,0 +1,104 @@
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Gestion des Stocks</h1>
+            <p class="text-gray-500 mt-1">Suivez les niveaux de stock et enregistrez les mouvements</p>
+        </div>
+        <button (click)="openCreateModal()"
+            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold flex items-center gap-2 transition-colors shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Nouveau Stock
+        </button>
+    </div>
+
+    <!-- Stats Overview (Optional, can be added later) -->
+
+    <!-- Filters & Search (Optional) -->
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && inventories.length === 0"
+        class="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
+        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900">Aucun stock défini</h3>
+        <p class="text-gray-500 mb-6">Commencez par associer un produit à un entrepôt.</p>
+        <button (click)="openCreateModal()" class="text-purple-600 font-medium hover:text-purple-700 hover:underline">
+            Créer un stock maintenant &rarr;
+        </button>
+    </div>
+
+    <!-- Inventory Table -->
+    <div *ngIf="!isLoading && inventories.length > 0"
+        class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Produit</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Entrepôt</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Quantité Disponible</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Réservé</th>
+                        <th scope="col"
+                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr *ngFor="let item of inventories" class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ item.productName }}</div>
+                            <div class="text-xs text-gray-500">ID: {{ item.id }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span
+                                class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                                {{ item.warehouseName }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-bold" [class.text-red-600]="item.quantityOnHand <= 5"
+                                [class.text-green-600]="item.quantityOnHand > 20">
+                                {{ item.quantityOnHand }}
+                            </div>
+                            <div *ngIf="item.quantityOnHand <= 5" class="text-xs text-red-500 font-medium">Stock faible
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ item.quantityReserved }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button (click)="openMovementModal(item)"
+                                class="text-purple-600 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-3 py-1.5 rounded-lg transition-colors">
+                                Gérer Mouvement
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <app-inventory-modal [isOpen]="isCreateModalOpen" [isSubmitting]="isSubmitting" [backendErrors]="backendErrors"
+        (close)="closeCreateModal()" (submit)="onCreateInventory($event)">
+    </app-inventory-modal>
+
+    <app-movement-modal [isOpen]="isMovementModalOpen" [isSubmitting]="isSubmitting" [inventoryItem]="selectedInventory"
+        [backendErrors]="backendErrors" (close)="closeMovementModal()" (submit)="onRecordMovement($event)">
+    </app-movement-modal>
+</div>

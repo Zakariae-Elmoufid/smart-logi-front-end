@@ -1,0 +1,75 @@
+<div class="modal-backdrop" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-container" *ngIf="product">
+    <div class="modal-header">
+      <h2>{{ product.name }}</h2>
+      <button class="close-btn" (click)="onClose()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="product-info">
+        <div class="info-row">
+          <span class="label">SKU:</span>
+          <span class="value sku">{{ product.sku }}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="label">Catégorie:</span>
+          <span class="value">{{ product.category }}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="label">Prix unitaire:</span>
+          <span class="value price">{{ product.sellingPrice | currency:'MAD':'symbol':'1.2-2' }}</span>
+        </div>
+        
+        <div class="info-row">
+          <span class="label">Statut:</span>
+          <span class="value">
+            <span class="status-badge" [class.active]="product.active" [class.inactive]="!product.active">
+              {{ product.active ? 'Disponible' : 'Indisponible' }}
+            </span>
+          </span>
+        </div>
+      </div>
+      
+      <div class="quantity-section">
+        <span class="label">Quantité:</span>
+        <div class="quantity-controls">
+          <button 
+            class="qty-btn" 
+            (click)="decrementQuantity()"
+            [disabled]="quantity <= 1">
+            −
+          </button>
+          <input
+            type="number"
+            class="qty-input"
+            [value]="quantity"
+            (input)="onQuantityInput($event)"
+            min="1"
+          />
+          <button 
+            class="qty-btn" 
+            (click)="incrementQuantity()">
+            +
+          </button>
+        </div>
+      </div>
+      
+      <div class="total-section">
+        <span class="label">Total:</span>
+        <span class="total-price">{{ product.sellingPrice * quantity | currency:'MAD':'symbol':'1.2-2' }}</span>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="onClose()">Fermer</button>
+      <button 
+        class="btn btn-success" 
+        (click)="onAddToCart()"
+        [disabled]="!product.active">
+        🛒 Ajouter au panier
+      </button>
+    </div>
+  </div>
+</div>

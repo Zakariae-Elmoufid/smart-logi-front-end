@@ -1,3 +1,94 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import "tailwindcss";
+
+:root {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-light: #dbeafe;
+  --primary-dark: #1d4ed8;
+  --secondary: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #22c55e;
+}
+
+/*!* Reset *!*/
+/** {*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  box-sizing: border-box;*/
+/*}*/
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f8f9fa;
+}
+
+/* Tailwind utilities */
+@layer utilities {
+  /* Background */
+  .bg-primary { background-color: var(--primary) !important; }
+  .bg-primary-hover { background-color: var(--primary-hover) !important; }
+  .bg-primary-light { background-color: var(--primary-light) !important; }
+  .bg-primary-dark { background-color: var(--primary-dark) !important; }
+  .bg-secondary { background-color: var(--secondary) !important; }
+  .bg-danger { background-color: var(--danger) !important; }
+  .bg-warning { background-color: var(--warning) !important; }
+  .bg-success { background-color: var(--success) !important; }
+
+  /* Text */
+  .text-primary { color: var(--primary) !important; }
+  .text-primary-hover { color: var(--primary-hover) !important; }
+  .text-primary-light { color: var(--primary-light) !important; }
+  .text-primary-dark { color: var(--primary-dark) !important; }
+  .text-secondary { color: var(--secondary) !important; }
+  .text-danger { color: var(--danger) !important; }
+  .text-warning { color: var(--warning) !important; }
+  .text-success { color: var(--success) !important; }
+
+  /* Border */
+  .border-primary { border-color: var(--primary) !important; }
+  .border-primary-hover { border-color: var(--primary-hover) !important; }
+  .border-secondary { border-color: var(--secondary) !important; }
+  .border-danger { border-color: var(--danger) !important; }
+
+  /* Hover */
+  .hover\:bg-primary:hover { background-color: var(--primary) !important; }
+  .hover\:bg-primary-hover:hover { background-color: var(--primary-hover) !important; }
+  .hover\:text-primary:hover { color: var(--primary) !important; }
+  .hover\:text-white:hover { color: white !important; }
+  .hover\:border-primary:hover { border-color: var(--primary) !important; }
+
+  /* Focus */
+  .focus\:ring-primary:focus {
+    --tw-ring-color: var(--primary) !important;
+  }
+
+  .focus\:border-primary:focus {
+    border-color: var(--primary) !important;
+  }
+}
+
+/* Gradients */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+}
+
+.bg-gradient-primary-hover {
+  background: linear-gradient(135deg, var(--primary-hover), var(--primary-dark)) !important;
+}
+
+/* Animation */
+@keyframes pulse-primary {
+  0%, 100% {
+    background-color: var(--primary);
+    opacity: 1;
+  }
+  50% {
+    background-color: var(--primary-hover);
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-primary {
+  animation: pulse-primary 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

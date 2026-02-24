@@ -1,0 +1,193 @@
+<aside
+    class="w-80 h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-900 shadow-2xl relative overflow-hidden">
+
+    <!-- Background Effects -->
+    <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
+    <div class="absolute inset-0 pointer-events-none"
+        style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05));"></div>
+
+    <!-- Logo Section -->
+    <div class="relative z-10 p-6 border-b border-white/10">
+        <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center shadow-lg backdrop-blur-sm">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-white tracking-tight">MANAGER</h3>
+                <p class="text-xs font-medium text-purple-200 uppercase tracking-wider">Warehouse & Stock</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-10 p-4 space-y-2 mt-2">
+
+        <!-- Dashboard -->
+        <a routerLink="/manager" routerLinkActive="bg-white/10 text-white shadow-lg border-l-4 border-purple-400"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="group flex items-center space-x-4 p-4 text-gray-300 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-300">
+
+            <div
+                class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-purple-500/20 transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <span class="text-sm font-semibold">Dashboard</span>
+            </div>
+
+            <svg class="w-4 h-4 text-gray-500 transform group-hover:translate-x-1 transition-transform duration-300 group-hover:text-purple-400"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+
+        <!-- Warehouses -->
+        <a routerLink="/manager/warehouse"
+            routerLinkActive="bg-white/10 text-white shadow-lg border-l-4 border-purple-400"
+            class="group flex items-center space-x-4 p-4 text-gray-300 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-300">
+
+            <div
+                class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-purple-500/20 transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <span class="text-sm font-semibold">Entrepôts</span>
+            </div>
+
+            <svg class="w-4 h-4 text-gray-500 transform group-hover:translate-x-1 transition-transform duration-300 group-hover:text-purple-400"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+
+        <!-- Inventory (Placeholder) -->
+        <a routerLink="/manager/inventory"
+            routerLinkActive="bg-white/10 text-white shadow-lg border-l-4 border-purple-400"
+            class="group flex items-center space-x-4 p-4 text-gray-300 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-300">
+
+            <div
+                class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-purple-500/20 transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <span class="text-sm font-semibold">Inventaire</span>
+            </div>
+
+            <svg class="w-4 h-4 text-gray-500 transform group-hover:translate-x-1 transition-transform duration-300 group-hover:text-purple-400"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+
+        <!-- Orders (Placeholder) -->
+        <a routerLink="/manager/orders" routerLinkActive="bg-white/10 text-white shadow-lg border-l-4 border-purple-400"
+            class="group flex items-center space-x-4 p-4 text-gray-300 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-300">
+
+            <div
+                class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-purple-500/20 transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <span class="text-sm font-semibold">Commandes</span>
+            </div>
+
+            <svg class="w-4 h-4 text-gray-500 transform group-hover:translate-x-1 transition-transform duration-300 group-hover:text-purple-400"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+
+        <!-- Sales Orders -->
+        <a routerLink="/manager/sales-orders" routerLinkActive="bg-white/10 text-white shadow-lg border-l-4 border-purple-400"
+            class="group flex items-center space-x-4 p-4 text-gray-300 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-300">
+
+            <div
+                class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-purple-500/20 transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <span class="text-sm font-semibold">Commandes Clients</span>
+            </div>
+
+            <svg class="w-4 h-4 text-gray-500 transform group-hover:translate-x-1 transition-transform duration-300 group-hover:text-purple-400"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+
+        <!-- Carriers -->
+        <a routerLink="/manager/carriers" routerLinkActive="bg-white/10 text-white shadow-lg border-l-4 border-purple-400"
+            class="group flex items-center space-x-4 p-4 text-gray-300 rounded-xl hover:bg-white/5 hover:text-white transition-all duration-300">
+
+            <div
+                class="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-purple-500/20 transition-all duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+            </div>
+
+            <div class="flex-1">
+                <span class="text-sm font-semibold">Transporteurs</span>
+            </div>
+
+            <svg class="w-4 h-4 text-gray-500 transform group-hover:translate-x-1 transition-transform duration-300 group-hover:text-purple-400"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
+
+    </nav>
+
+    <!-- Bottom Section -->
+    <div class="absolute bottom-8 left-6 right-6 z-10">
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                        <span class="text-white font-bold">WM</span>
+                    </div>
+                    <div>
+                        <p class="text-white font-semibold text-sm">Manager</p>
+                        <div class="flex items-center space-x-1">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <p class="text-xs text-green-200">En ligne</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Logout Button -->
+                <button (click)="logout()" 
+                    class="w-10 h-10 bg-red-500/20 hover:bg-red-500/40 rounded-lg flex items-center justify-center transition-all duration-300 group"
+                    title="Déconnexion">
+                    <svg class="w-5 h-5 text-red-300 group-hover:text-red-100 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</aside>

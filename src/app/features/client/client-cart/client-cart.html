@@ -1,0 +1,207 @@
+<div class="p-6 space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Mon Panier</h1>
+            <p class="text-gray-500 mt-1">{{ cartService.itemCount() }} article(s) dans votre panier</p>
+        </div>
+        
+        @if (cartItems.length > 0) {
+        <button (click)="clearCart()"
+            class="text-red-600 hover:text-red-700 font-medium flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Vider le panier
+        </button>
+        }
+    </div>
+
+    @if (cartItems.length === 0) {
+    <!-- Empty Cart -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Votre panier est vide</h3>
+        <p class="text-gray-500 mb-6">Parcourez notre catalogue et ajoutez des produits à votre panier</p>
+        <a routerLink="/client/products"
+            class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            Voir le catalogue
+        </a>
+    </div>
+    } @else {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Cart Items -->
+        <div class="lg:col-span-2 space-y-4">
+            @for (item of cartItems; track item.productId) {
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                <div class="flex items-center gap-4">
+                    <!-- Product Image Placeholder -->
+                    <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-lg font-semibold text-gray-900 truncate">{{ item.productName }}</h3>
+                        <p class="text-emerald-600 font-medium">{{ item.unitPrice | number:'1.2-2' }} DH / unité</p>
+                        @if (item.stock !== undefined && item.stock > 0) {
+                        <p class="text-xs text-gray-400">{{ item.stock }} en stock</p>
+                        }
+                    </div>
+
+                    <!-- Quantity Controls -->
+                    <div class="flex items-center border border-gray-300 rounded-lg">
+                        <button (click)="updateQuantity(item.productId, item.quantity - 1)"
+                            class="px-3 py-2 hover:bg-gray-100 transition-colors">
+                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                            </svg>
+                        </button>
+                        <input type="number" [value]="item.quantity" min="1" [max]="item.stock || 999"
+                            (change)="updateQuantity(item.productId, $any($event.target).value)"
+                            class="w-14 text-center border-x border-gray-300 py-2 focus:outline-none">
+                        <button (click)="updateQuantity(item.productId, item.quantity + 1)"
+                            class="px-3 py-2 hover:bg-gray-100 transition-colors"
+                            [disabled]="item.stock !== undefined && item.quantity >= item.stock">
+                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Item Total -->
+                    <div class="text-right">
+                        <p class="text-lg font-bold text-gray-900">{{ getItemTotal(item) | number:'1.2-2' }} DH</p>
+                    </div>
+
+                    <!-- Remove Button -->
+                    <button (click)="removeItem(item.productId)"
+                        class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- Order Summary -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Récapitulatif</h2>
+                
+                <div class="space-y-3 mb-6">
+                    <div class="flex justify-between text-gray-600">
+                        <span>Sous-total ({{ cartService.itemCount() }} articles)</span>
+                        <span>{{ cartService.totalAmount() | number:'1.2-2' }} DH</span>
+                    </div>
+                    <div class="flex justify-between text-gray-600">
+                        <span>Frais de livraison</span>
+                        <span class="text-green-600">Gratuit</span>
+                    </div>
+                    <hr class="border-gray-200">
+                    <div class="flex justify-between text-xl font-bold text-gray-900">
+                        <span>Total</span>
+                        <span class="text-emerald-600">{{ cartService.totalAmount() | number:'1.2-2' }} DH</span>
+                    </div>
+                </div>
+
+                <button (click)="openConfirmModal()"
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-6 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 13l4 4L19 7" />
+                    </svg>
+                    Passer la commande
+                </button>
+
+                <a routerLink="/client/products"
+                    class="w-full mt-3 inline-flex items-center justify-center gap-2 text-gray-600 hover:text-gray-800 py-2 font-medium">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Continuer mes achats
+                </a>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Confirm Order Modal -->
+    @if (showConfirmModal) {
+    <div class="fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+            <!-- Backdrop -->
+            <div class="fixed inset-0 bg-black/50 transition-opacity" (click)="closeConfirmModal()"></div>
+
+            <!-- Modal -->
+            <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Confirmer votre commande</h3>
+                    <p class="text-gray-500 mb-6">
+                        Vous êtes sur le point de passer une commande de 
+                        <span class="font-semibold text-emerald-600">{{ cartService.totalAmount() | number:'1.2-2' }} DH</span>
+                        pour {{ cartService.itemCount() }} article(s).
+                    </p>
+
+                    <div class="flex gap-3">
+                        <button (click)="closeConfirmModal()" [disabled]="isSubmitting"
+                            class="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 font-medium transition-colors">
+                            Annuler
+                        </button>
+                        <button (click)="submitOrder()" [disabled]="isSubmitting"
+                            class="flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
+                            @if (isSubmitting) {
+                            <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Envoi...
+                            } @else {
+                            Confirmer
+                            }
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Toast Notification -->
+    @if (showToast) {
+    <div class="fixed bottom-6 right-6 z-50 animate-slide-up">
+        <div class="flex items-center gap-3 px-6 py-4 rounded-xl shadow-lg {{ toastType === 'success' ? 'bg-green-600' : 'bg-red-600' }} text-white">
+            @if (toastType === 'success') {
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            } @else {
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            }
+            <span class="font-medium">{{ toastMessage }}</span>
+        </div>
+    </div>
+    }
+</div>

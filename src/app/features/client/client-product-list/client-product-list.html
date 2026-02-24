@@ -1,0 +1,194 @@
+<!-- src/app/pages/client/products/products-list/products-list.component.html -->
+
+<div class="products-container">
+  <!-- Toast notification -->
+  <div *ngIf="showToast" class="toast-notification" [ngClass]="toastType">
+    {{ toastMessage }}
+  </div>
+
+  <div class="page-header">
+    <h1>Gestion des Produits</h1>
+    <button class="btn btn-secondary" (click)="onReset()">
+      Réinitialiser
+    </button>
+  </div>
+
+  <!-- Zone de filtres -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label for="search">Rechercher  Nom</label>
+      <input
+        id="search"
+        type="text"
+        [formControl]="searchControl"
+        placeholder="Ex: PROD-001 ou Laptop"
+        class="form-control"
+      />
+    </div>
+
+    <div class="filter-group">
+      <label for="category">Catégorie</label>
+      <select id="category" [formControl]="categoryControl" class="form-control">
+        <option value="">Toutes les catégories</option>
+        <option *ngFor="let cat of categories.slice(1)" [value]="cat.name">
+          {{ cat.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="pageSize">Éléments par page</label>
+      <select id="pageSize" [formControl]="sizeControl" class="form-control">
+        <option *ngFor="let size of pageSizes" [value]="size">
+          {{ size }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Toast d'erreur -->
+  <div *ngIf="error$ | async as error" class="error-toast">
+    <div class="error-content">
+      <strong>Erreur {{ error.status }}</strong>
+      <p>{{ error.message }}</p>
+      <small *ngIf="error.detail">{{ error.detail }}</small>
+    </div>
+    <button class="close-btn" (click)="onClearError()">&times;</button>
+  </div>
+
+  <!-- État de chargement -->
+  <div *ngIf="loading$ | async" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Chargement des produits...</p>
+  </div>
+
+  <!-- Tableau des produits -->
+  <div *ngIf="!(loading$ | async)" class="table-container">
+    <table *ngIf="!(isEmpty$ | async)" class="products-table">
+      <thead>
+      <tr>
+        <th (click)="onSort('sku')" class="sortable">
+          SKU {{ getSortIcon('sku') }}
+        </th>
+        <th (click)="onSort('name')" class="sortable">
+          Nom {{ getSortIcon('name') }}
+        </th>
+        <th (click)="onSort('category')" class="sortable">
+          Catégorie {{ getSortIcon('category') }}
+        </th>
+        <th>Prix</th>
+        <th>Quantité</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let product of products$ | async; trackBy: trackByProductId">
+        <td class="sku-cell">{{ product.sku }}</td>
+        <td class="name-cell">{{ product.name }}</td>
+        <td>{{ product.category }}</td>
+        <td class="price-cell">{{ product.sellingPrice | currency:'MAD':'symbol':'1.2-2' }}</td>
+        <td class="quantity-cell">
+          <div class="quantity-controls">
+            <button
+              class="qty-btn"
+              (click)="decrementQuantity(product.id)"
+              [disabled]="!quantities[product.id] || quantities[product.id] <= 1">
+              −
+            </button>
+            <input
+              type="number"
+              class="qty-input"
+              [value]="quantities[product.id] || 1"
+              (change)="onQuantityChange(product.id, $event)"
+              min="1"
+            />
+            <button
+              class="qty-btn"
+              (click)="incrementQuantity(product.id)">
+              +
+            </button>
+          </div>
+        </td>
+        <td class="actions-cell">
+          <button
+            class="btn btn-sm btn-success add-cart-btn"
+            (click)="addToCart(product)">
+            🛒 Ajouter
+          </button>
+          <button
+            class="btn btn-sm btn-primary"
+            (click)="openProductModal(product)">
+            Voir
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!-- État vide -->
+    <div *ngIf="isEmpty$ | async" class="empty-state">
+      <div class="empty-icon">📦</div>
+      <h3>Aucun produit trouvé</h3>
+      <p>Essayez de modifier vos critères de recherche ou de réinitialiser les filtres.</p>
+    </div>
+  </div>
+
+  <!-- Message d'erreur sous le tableau -->
+  <div *ngIf="(error$ | async) && !(loading$ | async)" class="error-message">
+    <p>
+      Une erreur est survenue lors du chargement des produits.
+      Veuillez réessayer ou contacter le support si le problème persiste.
+    </p>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totals$ | async as totals" class="pagination-section">
+    <div class="pagination-info">
+      Affichage de {{ (totals.currentPage * totals.size) + 1 }} à
+      {{ Math.min((totals.currentPage + 1) * totals.size, totals.totalElements) }}
+      sur {{ totals.totalElements }} résultat(s)
+    </div>
+
+    <div class="pagination-controls">
+      <button
+        class="btn btn-sm"
+        [disabled]="totals.currentPage === 0"
+        (click)="onPageChange(0)">
+        Premier
+      </button>
+      <button
+        class="btn btn-sm"
+        [disabled]="totals.currentPage === 0"
+        (click)="onPageChange(totals.currentPage - 1)">
+        Précédent
+      </button>
+
+      <span class="page-indicator">
+        Page {{ totals.currentPage + 1 }} / {{ totals.totalPages || 1 }}
+      </span>
+
+      <button
+        class="btn btn-sm"
+        [disabled]="totals.currentPage >= totals.totalPages - 1"
+        (click)="onPageChange(totals.currentPage + 1)">
+        Suivant
+      </button>
+      <button
+        class="btn btn-sm"
+        [disabled]="totals.currentPage >= totals.totalPages - 1"
+        (click)="onPageChange(totals.totalPages - 1)">
+        Dernier
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Product Detail Modal -->
+<app-product-detail-modal
+  [product]="selectedProduct"
+  [isOpen]="isModalOpen"
+  [quantity]="modalQuantity"
+  (close)="closeProductModal()"
+  (addToCart)="onModalAddToCart($event)"
+  (quantityChange)="onModalQuantityChange($event)">
+</app-product-detail-modal>
