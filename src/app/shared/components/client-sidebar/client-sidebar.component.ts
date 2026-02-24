@@ -22,4 +22,8 @@ export class ClientSidebar implements OnInit {
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
   }
+
+  logout(): void {
+    this.authService.logout();
+  }
 }

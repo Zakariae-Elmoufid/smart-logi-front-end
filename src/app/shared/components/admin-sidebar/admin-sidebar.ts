@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {RouterLink, RouterLinkActive} from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-admin-sidebar',
@@ -9,5 +10,9 @@ import {RouterLink, RouterLinkActive} from '@angular/router';
   standalone : true,
 })
 export class AdminSidebar {
+  private authService = inject(AuthService);
 
+  logout(): void {
+    this.authService.logout();
+  }
 }

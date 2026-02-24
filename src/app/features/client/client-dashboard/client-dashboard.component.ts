@@ -17,7 +17,7 @@ export class ClientDashboard implements OnInit {
   recentOrders: SalesOrder[] = [];
   isLoading = true;
   currentUser: User | null = null;
-
+  ordersCount: number | null = 0 ;
   constructor(
     public cartService: CartService,
     private salesOrderService: SalesOrderService,
@@ -33,12 +33,13 @@ export class ClientDashboard implements OnInit {
   loadRecentOrders() {
     this.isLoading = true;
     this.cdr.detectChanges();
-    
+
     this.salesOrderService.getMyOrders().subscribe({
       next: (response) => {
-        console.log('Orders loaded:', response.data);
         if (response.data) {
           const ordersData = Array.isArray(response.data) ? response.data : [response.data];
+          this.ordersCount = ordersData.length;
+
           this.recentOrders = ordersData.slice(0, 5).map(order => ({
             ...order,
             totalAmount: this.calculateOrderTotal(order)
@@ -69,7 +70,11 @@ export class ClientDashboard implements OnInit {
 
   getStatusColor(status: string): string {
     switch (status?.toUpperCase()) {
-      case 'PENDING':
+      case 'CREATED':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'PARTIALLY_RESERVED':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'RESERVED':
         return 'bg-yellow-100 text-yellow-800';
       case 'CONFIRMED':
         return 'bg-green-100 text-green-800';
@@ -84,8 +89,13 @@ export class ClientDashboard implements OnInit {
 
   getStatusLabel(status: string): string {
     switch (status?.toUpperCase()) {
-      case 'PENDING':
-        return 'En attente';
+      case 'CREATED':
+        return 'cree';
+      case 'PARTIALLY_RESERVED':
+        return 'Partiellement réservée';
+
+      case 'RESERVED':
+        return 'reserveè';
       case 'CONFIRMED':
         return 'Confirmée';
       case 'CANCELLED':

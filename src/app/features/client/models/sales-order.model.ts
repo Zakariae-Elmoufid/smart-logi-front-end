@@ -14,6 +14,7 @@ export interface SalesOrderLineResponse {
   quantityRequested: number;
   quantityReserved: number;
   quantityBackorder: number;
+  status : String;
   price: number;
   totalPrice: number;
 }

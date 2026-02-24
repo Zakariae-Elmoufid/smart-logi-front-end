@@ -27,7 +27,7 @@ export class ClientOrders implements OnInit {
   loadOrders() {
     this.isLoading = true;
     this.cdr.detectChanges();
-    
+
     this.salesOrderService.getMyOrders().subscribe({
       next: (response) => {
         const ordersData = Array.isArray(response.data) ? response.data : (response.data ? [response.data] : []);
@@ -105,7 +105,8 @@ export class ClientOrders implements OnInit {
 
   getStatusIcon(status: string): string {
     switch (status?.toUpperCase()) {
-      case 'PENDING':
+
+      case 'RESERVED':
         return 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z';
       case 'CONFIRMED':
         return 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z';

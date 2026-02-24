@@ -1,11 +1,14 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, switchMap, throwError, BehaviorSubject, filter, take } from 'rxjs';
+import { catchError, switchMap, throwError, BehaviorSubject, filter, take, finalize } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
 
-let isRefreshing = false;
-let refreshTokenSubject = new BehaviorSubject<string | null>(null);
+// Use a closure to properly manage state
+const refreshState = {
+  isRefreshing: false,
+  refreshTokenSubject: new BehaviorSubject<string | null>(null)
+};
 
 export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -16,16 +19,15 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
       // Only try to refresh if we have a refresh token and got a 401
       const refreshToken = tokenService.getRefreshToken();
       
-      if (error.status === 401 && !req.url.includes('/auth/refresh') && refreshToken) {
+      if (error.status === 401 && !req.url.includes('/auth/refresh') && !req.url.includes('/auth/login') && refreshToken) {
 
-        if (!isRefreshing) {
-          isRefreshing = true;
-          refreshTokenSubject.next(null);
+        if (!refreshState.isRefreshing) {
+          refreshState.isRefreshing = true;
+          refreshState.refreshTokenSubject.next(null);
 
           return authService.refreshToken().pipe(
             switchMap((tokens) => {
-              isRefreshing = false;
-              refreshTokenSubject.next(tokens.accessToken);
+              refreshState.refreshTokenSubject.next(tokens.accessToken);
 
               const clonedReq = req.clone({
                 setHeaders: {
@@ -35,13 +37,15 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
               return next(clonedReq);
             }),
             catchError((err) => {
-              isRefreshing = false;
               authService.logout();
               return throwError(() => err);
+            }),
+            finalize(() => {
+              refreshState.isRefreshing = false;
             })
           );
         } else {
-          return refreshTokenSubject.pipe(
+          return refreshState.refreshTokenSubject.pipe(
             filter(token => token !== null),
             take(1),
             switchMap(token => {

@@ -29,7 +29,6 @@ export class AdminCategory implements OnInit {
   categoryToDelete: Category | null = null;
   isDeleting = false;
 
-  // Toast notifications
   toastMessage = '';
   toastType: 'success' | 'error' = 'success';
   showToast = false;

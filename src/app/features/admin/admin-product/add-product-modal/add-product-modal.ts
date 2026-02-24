@@ -68,11 +68,9 @@ export class AddProductModal implements OnChanges {
     this.categoryService.getCategories().subscribe({
       next: (resp) => {
         this.categories = resp.data;
-        console.log('Categories loaded:', this.categories);
         this.isLoadingCategories = false;
       },
       error: (error) => {
-        console.error('Error loading categories:', error);
         this.isLoadingCategories = false;
       },
     });

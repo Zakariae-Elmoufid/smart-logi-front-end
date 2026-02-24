@@ -48,28 +48,6 @@
       </svg>
     </a>
 
-    <!-- Users -->
-    <a routerLink="/admin/users" routerLinkActive="bg-gradient-primary text-white shadow-lg"
-      class="group flex items-center space-x-4 p-4 text-gray-300 rounded-2xl hover:bg-white/10 hover:text-white transition-all duration-300 hover:translate-x-1">
-
-      <div
-        class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center group-hover:bg-secondary/20 transition-all duration-300">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-      </div>
-
-      <div class="flex-1">
-        <span class="text-lg font-semibold">Utilisateurs</span>
-        <p class="text-xs text-gray-400 group-hover:text-secondary transition-colors">Gestion des comptes</p>
-      </div>
-
-      <svg class="w-5 h-5 text-secondary transform group-hover:translate-x-1 transition-transform duration-300"
-        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-      </svg>
-    </a>
 
     <!-- Products -->
     <a routerLink="/admin/products" routerLinkActive="bg-gradient-primary text-white shadow-lg"
@@ -198,6 +176,18 @@
         </svg>
       </div>
       <span class="text-sm font-medium">Paramètres</span>
+    </button>
+
+    <!-- Logout Button -->
+    <button (click)="logout()"
+      class="w-full flex items-center space-x-4 p-4 text-gray-300 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all duration-300 group">
+      <div
+        class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center group-hover:bg-red-500/20 transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+      </div>
+      <span class="text-sm font-medium">Déconnexion</span>
     </button>
   </div>
 

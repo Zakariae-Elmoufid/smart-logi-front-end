@@ -10,8 +10,9 @@ import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 
-import {ProductsEffects} from './features/client/client-product-list/store/products.effects';
-import {productsReducer} from './features/client/client-product-list/store/products.reducer';
+import { ProductsEffects } from './features/client/client-product-list/store/products.effects';
+import { productsReducer } from './features/client/client-product-list/store/products.reducer';
+import { InventoryEffects, inventoryReducer } from './shared/store/inventory';
 
 
 // Register French locale for CurrencyPipe
@@ -24,9 +25,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor, refreshTokenInterceptor])),
     { provide: LOCALE_ID, useValue: 'fr' },
     provideStore({
-      products: productsReducer
+      products: productsReducer,
+      inventory: inventoryReducer
     }),
-    provideEffects([ProductsEffects]),
+    provideEffects([ProductsEffects, InventoryEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })
   ]
 };

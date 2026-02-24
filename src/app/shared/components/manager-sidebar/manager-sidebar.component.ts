@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
     selector: 'app-manager-sidebar',
@@ -7,4 +8,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     imports: [RouterLink, RouterLinkActive],
     templateUrl: './manager-sidebar.html',
 })
-export class ManagerSidebar { }
+export class ManagerSidebar {
+    private authService = inject(AuthService);
+
+    logout(): void {
+        this.authService.logout();
+    }
+}

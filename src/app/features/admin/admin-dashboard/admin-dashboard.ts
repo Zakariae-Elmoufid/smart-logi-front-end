@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminApiService } from '../../../api/admin-api-service';
 import { AdminKPIs } from '../models/admin-kpis.model';
@@ -12,6 +12,7 @@ import { AdminKPIs } from '../models/admin-kpis.model';
   styleUrl: './admin-dashboard.css'
 })
 export class AdminDashboard implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
 
   public constructor(private  adminApiService: AdminApiService) { }
 
@@ -23,18 +24,20 @@ export class AdminDashboard implements OnInit {
     this.loadDashboardData();
   }
 
-  loadDashboardData(){
-  this.adminApiService.getGlobalKPIs().subscribe(
-    {
-      next: (resp)=> {
+  loadDashboardData(): void {
+    this.isLoading = true;
+    this.cdr.detectChanges();
+    
+    this.adminApiService.getGlobalKPIs().subscribe({
+      next: (resp) => {
         this.adminKpis = resp;
         this.isLoading = false;
-
+        this.cdr.detectChanges();
       },
-      error : (err)=> {
-        console.log('error ',err)
+      error: (err) => {
+        console.log('error ', err);
         this.isLoading = false;
-
+        this.cdr.detectChanges();
       }
     });
   }

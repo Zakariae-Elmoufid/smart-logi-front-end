@@ -340,6 +340,155 @@
   }
 }
 
+/* Toast Notification */
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  &.success {
+    background: #28a745;
+  }
+
+  &.error {
+    background: #dc3545;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Stock Badge */
+.stock-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  &.stock-ok {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  &.stock-low {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  &.stock-out {
+    background: #f8d7da;
+    color: #721c24;
+  }
+}
+
+/* Price Cell */
+.price-cell {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Quantity Controls */
+.quantity-cell {
+  min-width: 120px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #ced4da;
+  background: #f8f9fa;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #e9ecef;
+    border-color: #adb5bd;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.qty-input {
+  width: 50px;
+  height: 28px;
+  text-align: center;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.9rem;
+
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+
+  /* Hide number input spinners */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  -moz-appearance: textfield;
+}
+
+/* Actions Cell */
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.add-cart-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+  border: none;
+
+  &:hover:not(:disabled) {
+    background: #218838;
+  }
+}
+
 @media (max-width: 768px) {
   .products-container {
     padding: 1rem;
@@ -361,5 +510,14 @@
     tbody td {
       padding: 0.75rem 0.5rem;
     }
+  }
+
+  .quantity-controls {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .actions-cell {
+    flex-direction: column;
   }
 }

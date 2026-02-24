@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WarehouseService } from '../../../api/warehouse.service';
 import { InventoryService } from '../../../api/inventory.service';
 import { PurchaseOrderService } from '../../../api/purchase-order.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user.model';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-manager-dashboard',
@@ -13,7 +13,9 @@ import { forkJoin } from 'rxjs';
   imports: [CommonModule],
   templateUrl: './manager-dashboard.html',
 })
-export class ManagerDashboard implements OnInit {
+export class ManagerDashboard implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  
   stats = {
     totalWarehouses: 0,
     totalStock: 0,
@@ -28,21 +30,30 @@ export class ManagerDashboard implements OnInit {
     private inventoryService: InventoryService,
     private purchaseOrderService: PurchaseOrderService,
     private authService: AuthService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
-
     this.loadStats();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadStats() {
     this.isLoading = true;
+    this.cdr.detectChanges();
+    
     forkJoin({
       warehouses: this.warehouseService.getAll(),
       inventory: this.inventoryService.getAll(),
       orders: this.purchaseOrderService.getAllPurchaseOrders(),
-    }).subscribe({
+    })
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
       next: (res: any) => {
         // Warehouses
         const warehouses = Array.isArray(res.warehouses.data)
@@ -77,10 +88,12 @@ export class ManagerDashboard implements OnInit {
         ).length;
 
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error loading dashboard stats', err);
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }

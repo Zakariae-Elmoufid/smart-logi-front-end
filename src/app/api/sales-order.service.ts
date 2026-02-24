@@ -33,7 +33,7 @@ export class SalesOrderService {
 
   // Admin methods
   getAllOrders(): Observable<ApiResponse<SalesOrder[]>> {
-    return this.http.get<ApiResponse<SalesOrder[]>>(`${this.adminApiUrl}/salse-order`);
+    return this.http.get<ApiResponse<SalesOrder[]>>(`${this.adminApiUrl}/sales-order`);
   }
 
   getOrderById(id: number): Observable<ApiResponse<SalesOrder>> {
@@ -52,4 +52,5 @@ export class SalesOrderService {
   getManagerOrders(): Observable<ApiResponse<SalesOrder[]>> {
     return this.http.get<ApiResponse<SalesOrder[]>>(`${this.managerApiUrl}/sales-order`);
   }
+
 }

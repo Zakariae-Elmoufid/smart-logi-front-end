@@ -143,6 +143,7 @@
                                         <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Qté réservée</th>
                                         <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix U.</th>
                                         <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
+                                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
@@ -153,6 +154,7 @@
                                         <td class="px-4 py-3 text-sm text-gray-600 text-center">{{ line.quantityReserved }}</td>
                                         <td class="px-4 py-3 text-sm text-gray-600 text-right">{{ line.price | number:'1.2-2' }} DH</td>
                                         <td class="px-4 py-3 text-sm font-medium text-gray-900 text-right">{{ (line.price || 0) * (line.quantityRequested || 0) | number:'1.2-2' }} DH</td>
+                                        <td class="px-4 py-3 text-sm font-medium text-gray-900 text-right">{{ line.status}}</td>
                                     </tr>
                                     }
                                 </tbody>

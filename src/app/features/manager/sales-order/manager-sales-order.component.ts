@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SalesOrderService } from '../../../api/sales-order.service';
 import { SalesOrder } from '../../client/models/sales-order.model';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-manager-sales-order',
@@ -10,7 +11,9 @@ import { SalesOrder } from '../../client/models/sales-order.model';
   imports: [CommonModule, FormsModule],
   templateUrl: './manager-sales-order.component.html',
 })
-export class ManagerSalesOrderComponent implements OnInit {
+export class ManagerSalesOrderComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  
   orders: SalesOrder[] = [];
   filteredOrders: SalesOrder[] = [];
   isLoading = false;
@@ -23,25 +26,39 @@ export class ManagerSalesOrderComponent implements OnInit {
   toastMessage = '';
   toastType: 'success' | 'error' = 'success';
 
-  constructor(private salesOrderService: SalesOrderService) {}
+  constructor(
+    private salesOrderService: SalesOrderService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {
     this.loadOrders();
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   loadOrders() {
     this.isLoading = true;
-    this.salesOrderService.getManagerOrders().subscribe({
-      next: (response) => {
-        this.orders = response.data;
-        this.filteredOrders = [...this.orders];
-        this.isLoading = false;
-      },
-      error: () => {
-        this.isLoading = false;
-        this.displayToast('Erreur lors du chargement des commandes', 'error');
-      },
-    });
+    this.cdr.detectChanges();
+    
+    this.salesOrderService.getManagerOrders()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.orders = response.data;
+          this.filteredOrders = [...this.orders];
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.isLoading = false;
+          this.displayToast('Erreur lors du chargement des commandes', 'error');
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   filterOrders() {

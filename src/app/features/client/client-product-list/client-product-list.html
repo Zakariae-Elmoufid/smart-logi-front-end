@@ -1,6 +1,11 @@
 <!-- src/app/pages/client/products/products-list/products-list.component.html -->
 
 <div class="products-container">
+  <!-- Toast notification -->
+  <div *ngIf="showToast" class="toast-notification" [ngClass]="toastType">
+    {{ toastMessage }}
+  </div>
+
   <div class="page-header">
     <h1>Gestion des Produits</h1>
     <button class="btn btn-secondary" (click)="onReset()">
@@ -25,8 +30,8 @@
       <label for="category">Catégorie</label>
       <select id="category" [formControl]="categoryControl" class="form-control">
         <option value="">Toutes les catégories</option>
-        <option *ngFor="let cat of categories.slice(1)" [value]="cat">
-          {{ cat }}
+        <option *ngFor="let cat of categories.slice(1)" [value]="cat.name">
+          {{ cat.name }}
         </option>
       </select>
     </div>
@@ -71,7 +76,8 @@
         <th (click)="onSort('category')" class="sortable">
           Catégorie {{ getSortIcon('category') }}
         </th>
-        <th>Statut</th>
+        <th>Prix</th>
+        <th>Quantité</th>
         <th>Actions</th>
       </tr>
       </thead>
@@ -80,17 +86,38 @@
         <td class="sku-cell">{{ product.sku }}</td>
         <td class="name-cell">{{ product.name }}</td>
         <td>{{ product.category }}</td>
-        <td>
-            <span
-              class="badge"
-              [ngClass]="getStatusBadgeClass(product.active)">
-              {{ product.active ? 'Actif' : 'Inactif' }}
-            </span>
+        <td class="price-cell">{{ product.sellingPrice | currency:'MAD':'symbol':'1.2-2' }}</td>
+        <td class="quantity-cell">
+          <div class="quantity-controls">
+            <button
+              class="qty-btn"
+              (click)="decrementQuantity(product.id)"
+              [disabled]="!quantities[product.id] || quantities[product.id] <= 1">
+              −
+            </button>
+            <input
+              type="number"
+              class="qty-input"
+              [value]="quantities[product.id] || 1"
+              (change)="onQuantityChange(product.id, $event)"
+              min="1"
+            />
+            <button
+              class="qty-btn"
+              (click)="incrementQuantity(product.id)">
+              +
+            </button>
+          </div>
         </td>
-        <td>
+        <td class="actions-cell">
+          <button
+            class="btn btn-sm btn-success add-cart-btn"
+            (click)="addToCart(product)">
+            🛒 Ajouter
+          </button>
           <button
             class="btn btn-sm btn-primary"
-            [routerLink]="['/client/products', product.id]">
+            (click)="openProductModal(product)">
             Voir
           </button>
         </td>
@@ -155,3 +182,13 @@
     </div>
   </div>
 </div>
+
+<!-- Product Detail Modal -->
+<app-product-detail-modal
+  [product]="selectedProduct"
+  [isOpen]="isModalOpen"
+  [quantity]="modalQuantity"
+  (close)="closeProductModal()"
+  (addToCart)="onModalAddToCart($event)"
+  (quantityChange)="onModalQuantityChange($event)">
+</app-product-detail-modal>

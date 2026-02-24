@@ -159,4 +159,14 @@ export class AdminSalesOrder implements OnInit {
   get cancelledCount(): number {
     return this.orders.filter(o => o.orderStatus?.toUpperCase() === 'CANCELLED').length;
   }
+
+  calculateOrderTotal(order: SalesOrder): number {
+    if (order.totalAmount !== undefined && order.totalAmount !== null) {
+      return order.totalAmount;
+    }
+    if (order.orderLines && order.orderLines.length > 0) {
+      return order.orderLines.reduce((sum, line) => sum + (line.totalPrice || (line.price * line.quantityRequested) || 0), 0);
+    }
+    return 0;
+  }
 }
